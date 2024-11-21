@@ -1,0 +1,26 @@
+/* Estilo para el modal en pantallas grandes (PC) */
+.modal-dialog {
+    max-width: 600px; /* Ancho máximo del modal en pantalla grande */
+    margin: 30px auto; /* Centramos el modal vertical y horizontalmente */
+}
+
+/* Estilo para el contenido del modal */
+.modal-content {
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+}
+
+/* Estilo para el modal en pantallas móviles */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: 100%; /* Ancho del modal al 100% en pantallas móviles */
+        margin: 0; /* Eliminar márgenes para que ocupe toda la pantalla */
+        height: 100vh; /* El modal ocupará toda la altura de la pantalla */
+    }
+
+    .modal-content {
+        height: 100%; /* Aseguramos que el contenido del modal ocupe toda la altura */
+        border-radius: 0; /* Sin bordes redondeados en pantallas móviles */
+        overflow-y: auto; /* Permitir desplazamiento si el contenido es largo */
+    }
+}

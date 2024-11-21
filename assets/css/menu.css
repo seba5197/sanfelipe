@@ -1,0 +1,58 @@
+/* Estilo para el menú lateral */
+#sidebar {
+    height: 100vh; /* Hace que el menú ocupe toda la altura de la ventana */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    padding-top: 20px;
+    transition: left 0.3s ease;
+}
+
+#sidebar.show {
+    left: 0; /* Muestra el menú cuando se le añade la clase "show" */
+}
+
+#sidebar .nav-link {
+    font-size: 18px;
+}
+
+#sidebar .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Estilo para el contenido principal para que no se sobreponga al menú */
+.container-fluid {
+    margin-left: 250px; /* Asegura que el contenido no se superponga con el menú */
+    transition: margin-left 0.3s ease; /* Suaviza el efecto cuando se muestra/oculta el menú */
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        left: -250px; /* El menú se oculta por defecto */
+    }
+
+    #sidebar.show {
+        left: 0; /* Cuando se activa la clase "show", el menú se muestra */
+    }
+
+    .container-fluid {
+        margin-left: 0; /* En pantallas pequeñas, el contenido no tiene margen izquierdo */
+    }
+
+    /* Botón de hamburguesa visible solo en pantallas pequeñas */
+    #sidebarToggleBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000; /* Asegurarse de que el botón esté encima del menú */
+    }
+
+    .mobile {
+        position: inherit;
+        left: 20%;
+        max-width: 70vw;
+        font-size: 28px;
+    }
+}
