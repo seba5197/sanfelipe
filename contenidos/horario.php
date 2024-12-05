@@ -1,37 +1,106 @@
 <?php
-// Función para generar la tabla de horario
-function generarHorario($titulo) {
-    // Definir las horas de inicio y fin
-    $startHour = 8;  // 8:00 AM
-    $endHour = 18;   // 6:00 PM
-    $minutesIncrement = 45; // Intervalos de 45 minutos
 
-    // Iniciar el array de tiempos
-    $horas = [];
-    
-    // Generar los horarios de 45 minutos
-    for ($i = 0; $startHour < $endHour || ($startHour == $endHour && $i < 30); $startHour++) {
-        for ($min = 0; $min < 60; $min += $minutesIncrement) {
-            $hourDisplay = str_pad($startHour, 2, "0", STR_PAD_LEFT) . ":" . str_pad($min, 2, "0", STR_PAD_LEFT);
-            $horas[] = $hourDisplay;
-        }
+class Horario {
+    // Definir todas las propiedades de la clase
+    public $id;
+    public $hora;
+    public $asignatura;
+    public $docente;
+    public $curso;
+    public $dia;
+    public $fechaInicio;
+    public $fechaFin;
+
+    // Constructor para inicializar los valores
+    public function __construct($id, $hora, $asignatura, $docente, $curso, $dia, $fechaInicio, $fechaFin) {
+        $this->id = $id;               // Asignar el ID
+        $this->hora = $hora;           // Asignar la hora
+        $this->asignatura = $asignatura; // Asignar la asignatura
+        $this->docente = $docente;      // Asignar el docente
+        $this->curso = $curso;          // Asignar el curso
+        $this->dia = $dia;              // Asignar el día
+        $this->fechaInicio = $fechaInicio; // Asignar fecha de inicio
+        $this->fechaFin = $fechaFin;     // Asignar fecha de fin
     }
+}
 
+// Datos ficticios del horario
+$horarios = [
+    new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
+    new Horario(2, "08:45 - 09:30", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
+    new Horario(3, "09:30 - 10:15", "Lenguaje", "Profesor 2", "3°A", "Martes", "28/11/2024", "28/12/2024"),
+    new Horario(4, "10:15 - 11:00", "Ciencias", "Profesor 3", "3°A", "Miércoles", "28/11/2024", "28/12/2024"),
+    new Horario(5, "11:00 - 11:45", "Historia", "Profesor 4", "3°A", "Jueves", "28/11/2024", "28/12/2024"),
+    new Horario(6, "11:45 - 12:30", "Inglés", "Profesor 5", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
+    new Horario(7, "12:30 - 13:00", "Educación Física", "Profesor 6", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
+    new Horario(8, "14:00 - 14:45", "Artes", "Profesor 7", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
+    new Horario(9, "14:45 - 15:30", "Tecnología", "Profesor 8", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
+];
+
+function generarHorario($titulo, $horarios) {
     // Crear la tabla HTML
     echo '<div class="container">';
-    echo '<h2 class="text-center my-4">Tabla de Horario '.$titulo.'</h2>';
+    echo '<h2 class="text-center my-4">Horario de ' . $titulo . '</h2>';
     echo '<table class="table table-bordered">';
-    echo '<thead><tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr></thead>';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Fecha de Inicio</th><th>Fecha de Fin</th>';
+    echo '</tr>';
+    echo '</thead>';
     echo '<tbody>';
 
-    // Rellenar la tabla con horarios
-    foreach ($horas as $hora) {
-        echo '<tr>';
-        echo '<td>' . $hora . '</td>';
-        for ($i = 0; $i < 5; $i++) { // 5 columnas para los días de la semana
-            echo '<td><input type="text" class="form-control" placeholder="Asignar actividad"></td>';
+    // Agrupar horarios por curso
+    $cursos = [];
+    foreach ($horarios as $horario) {
+        $cursos[$horario->curso][] = $horario;
+    }
+
+    // Recorrer los cursos y generar las filas para la tabla
+    foreach ($cursos as $curso => $horariosCurso) {
+        foreach ($horariosCurso as $index => $horario) {
+            echo '<tr>';
+            
+            // Hora
+            echo '<td>' . $horario->hora . '</td>';
+            
+            // Lunes a Viernes
+            $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+            foreach ($dias as $dia) {
+                $actividad = array_filter($horariosCurso, function($h) use ($dia) {
+                    return $h->dia === $dia;
+                });
+
+                if (!empty($actividad)) {
+                    $actividad = array_values($actividad)[0]; // Obtener el primer resultado
+                    echo '<td>';
+                    echo $actividad->asignatura . ' <br> ' . $actividad->docente;
+                    // Agregar ícono y texto "Editar"
+                    echo ' <a href="#" onclick="abrirPopupasignatura(\'' . $actividad->id . '\', \'' . $dia . '\')" class="edit-icon" data-dia="' . $dia . '" data-id="' . $actividad->id . '">';
+                    echo '<img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar';
+                    echo '</a>';
+                    
+                    echo '</td>';
+                } else {
+                    echo '<td></td>';
+                }
+            }
+            
+            // Fecha de inicio y fin
+            echo '<td>';
+            echo $horario->fechaInicio; 
+            echo ' <a href="#" class="edit-icon" data-dia="inicio" data-id="' . $horario->id . '">';
+            echo '<img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar';
+            echo '</a>';
+            echo '</td>';
+            echo '<td>';
+            echo $horario->fechaFin;
+            echo '<a href="#" onclick="abrirPopupfecha(\'' . $horario->id . '\', \'' . $horario->dia . '\')" class="edit-icon" data-dia="fin" data-id="' . $horario->id . '">';
+            echo '<img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar';
+            echo '</a>';    
+            echo '</td>';
+            
+            echo '</tr>';
         }
-        echo '</tr>';
     }
 
     echo '</tbody>';
@@ -39,6 +108,9 @@ function generarHorario($titulo) {
     echo '</div>';
 }
 
-// Llamar a la función para mostrar la tabla
+
+
+
+
 
 ?>

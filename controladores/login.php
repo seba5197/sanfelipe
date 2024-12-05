@@ -7,7 +7,7 @@ session_start(); // Iniciar la sesión
 function validarUsuario($username, $password) {
     // Simulando datos de usuarios con roles (en producción, estos datos vendrían de una base de datos)
     $usuarios = [
-        'adminuser' => ['password' => '1234', 'role' => 'admin'],
+        'seba' => ['password' => '123321', 'role' => 'admin'],
         'docenteuser' => ['password' => 'abcd', 'role' => 'docente'],
         'alumnouser' => ['password' => 'pass123', 'role' => 'alumno']
     ];
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = $usuarioValido['role'];
 
         // Redireccionar a una página de bienvenida o panel de control
-        header("Location: ../public/welcome.php");
+        header("Location: ../public/index.php");
         exit();
     } else {
         // Credenciales no válidas - mostrar mensaje de error

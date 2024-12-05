@@ -19,7 +19,7 @@ include_once("../includes/menu.php");
 //simulamos la session
 session_start();
 $_SESSION['rol'] = 'admin'; // Simular que el rol es admin (esto se obtiene de la base de datos o sesión)
-$_SESSION['username'] = 'Juan Pérez 2'; // Simular el nombre de usuario
+$_SESSION['username'] = 'seba'; // Simular el nombre de usuario
 
 // Obtener los valores de sesión
 $userRole = $_SESSION['rol'] ?? 'guest'; // Si no hay rol en la sesión, asignar 'guest'

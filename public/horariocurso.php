@@ -34,19 +34,7 @@ $formulario = new Formularios();
             <div class="col-md-12 ">
         
         <?php 
-           $horarios = [
-            new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(2, "08:45 - 09:30", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(3, "09:30 - 10:15", "Lenguaje", "Profesor 2", "3°A", "Martes", "28/11/2024", "28/12/2024"),
-            new Horario(4, "10:15 - 11:00", "Ciencias", "Profesor 3", "3°A", "Miércoles", "28/11/2024", "28/12/2024"),
-            new Horario(5, "11:00 - 11:45", "Historia", "Profesor 4", "3°A", "Jueves", "28/11/2024", "28/12/2024"),
-            new Horario(6, "11:45 - 12:30", "Inglés", "Profesor 5", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
-            new Horario(7, "12:30 - 13:00", "Educación Física", "Profesor 6", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(8, "14:00 - 14:45", "Artes", "Profesor 7", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(9, "14:45 - 15:30", "Tecnología", "Profesor 8", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
-        ];
-        echo 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa<i class="fa-solid fa-pencil"></i>';
-        $titulo="titulo "; 
+           $titulo="DOCENTE 1";
            generarHorario($titulo, $horarios);
         ?>
             </div>
@@ -54,7 +42,7 @@ $formulario = new Formularios();
         <button class="btn btn-primary d-md-none" id="sidebarToggleBtn">
                 <i class="fas fa-bars"></i>
             </button>
-           
+            
             <?php            
                 // Llamar a la función para generar el menú lateral
                 generateSidebarMenu("Horario docentes", $userName, $userRole);
@@ -69,7 +57,6 @@ $formulario = new Formularios();
 
  
     <?php
-    
     // Crea una instancia del generador de pie de página y carga los scripts
     $footer = new FooterGenerator(["menu.js"]);
     $footer->renderFooter();

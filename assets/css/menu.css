@@ -56,3 +56,21 @@
         font-size: 28px;
     }
 }
+/* Estilo para el ícono de lápiz */
+.edit-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;  /* Tamaño pequeño para el texto */
+}
+
+.edit-icon-img {
+    width: 15px;  /* Tamaño pequeño del ícono */
+    height: 15px;
+    margin-right: 5px;  /* Espacio entre el ícono y el texto */
+}
+
+/* Cambiar el color del ícono cuando se pasa el mouse */
+.edit-icon:hover .edit-icon-img {
+    filter: brightness(1.2);
+}

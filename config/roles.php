@@ -16,8 +16,8 @@ function getRolesFromDatabase() {
 }
 function getUserRole() {
     // Verifica si la variable de sesión 'role' está definida y tiene un valor
-    if (isset($_SESSION['role'])) {
-        return $_SESSION['role'];
+    if (isset($_SESSION['rol'])) {
+        return $_SESSION['rol'];
     } else {
         // Si no está definido el rol en la sesión, puedes devolver un valor por defecto o null
         return null;  // o podrías devolver 'guest' si prefieres tener un rol por defecto
