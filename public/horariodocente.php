@@ -31,10 +31,11 @@ $formulario = new Formularios();
     </header>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 ">
+            <div class="col-md-12" id="popup">
         
         <?php 
            $horarios = [
+            //new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024","sala","codigo curso"),
             new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
             new Horario(2, "08:45 - 09:30", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
             new Horario(3, "09:30 - 10:15", "Lenguaje", "Profesor 2", "3°A", "Martes", "28/11/2024", "28/12/2024"),
@@ -45,7 +46,6 @@ $formulario = new Formularios();
             new Horario(8, "14:00 - 14:45", "Artes", "Profesor 7", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
             new Horario(9, "14:45 - 15:30", "Tecnología", "Profesor 8", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
         ];
-        echo 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa<i class="fa-solid fa-pencil"></i>';
         $titulo="titulo "; 
            generarHorario($titulo, $horarios);
         ?>

@@ -38,13 +38,16 @@ $horarios = [
 ];
 
 function generarHorario($titulo, $horarios) {
+
+    $fechaInicio = $horarios[0]->fechaInicio;
+    $fechaFin = $horarios[0]->fechaFin;
     // Crear la tabla HTML
     echo '<div class="container">';
-    echo '<h2 class="text-center my-4">Horario de ' . $titulo . '</h2>';
+    echo '<h2 class="text-center my-4">Horario de ' . $titulo ." ". $fechaInicio ." - ". $fechaFin.  '</h2>';
     echo '<table class="table table-bordered">';
     echo '<thead>';
     echo '<tr>';
-    echo '<th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Fecha de Inicio</th><th>Fecha de Fin</th>';
+    echo '<th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th>';
     echo '</tr>';
     echo '</thead>';
     echo '<tbody>';
@@ -85,21 +88,7 @@ function generarHorario($titulo, $horarios) {
                 }
             }
             
-            // Fecha de inicio y fin
-            echo '<td>';
-            echo $horario->fechaInicio; 
-            echo ' <a href="#" class="edit-icon" data-dia="inicio" data-id="' . $horario->id . '">';
-            echo '<img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar';
-            echo '</a>';
-            echo '</td>';
-            echo '<td>';
-            echo $horario->fechaFin;
-            echo '<a href="#" onclick="abrirPopupfecha(\'' . $horario->id . '\', \'' . $horario->dia . '\')" class="edit-icon" data-dia="fin" data-id="' . $horario->id . '">';
-            echo '<img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar';
-            echo '</a>';    
-            echo '</td>';
-            
-            echo '</tr>';
+           
         }
     }
 
