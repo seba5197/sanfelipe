@@ -1,59 +1,78 @@
-/* Estilo para el modal en pantallas grandes (PC) */
-.modal-dialog {
-    max-width: 600px; /* Ancho máximo del modal en pantalla grande */
-    margin: 30px auto; /* Centramos el modal vertical y horizontalmente */
+/* Estilo general para la página */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-/* Estilo para el contenido del modal */
-.modal-content {
-    border-radius: 10px; /* Bordes redondeados */
-    padding: 20px; /* Espaciado interno */
-}
-
-/* Estilo para el modal en pantallas móviles */
-@media (max-width: 768px) {
-    .modal-dialog {
-        width: 100%; /* Ancho del modal al 100% en pantallas móviles */
-        margin: 0; /* Eliminar márgenes para que ocupe toda la pantalla */
-        height: 100vh; /* El modal ocupará toda la altura de la pantalla */
-    }
-
-    .modal-content {
-        height: 100%; /* Aseguramos que el contenido del modal ocupe toda la altura */
-        border-radius: 0; /* Sin bordes redondeados en pantallas móviles */
-        overflow-y: auto; /* Permitir desplazamiento si el contenido es largo */
-    }
-}
-
-
+/* Fondo oscuro trasparente para el overlay */
 .popup-overlay {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+    z-index: 99;
+    display: none; /* Inicialmente oculto */
 }
 
-.popup-contenido {
-    position: absolute;
+/* Contenido del popup centrado */
+.popup-content {
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    background-color: white;
+    transform: translate(-50%, -50%); /* Para centrar en el medio */
+    max-width: 500px;
+    width: 100%;
     padding: 20px;
+    border: 1px solid #ccc;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    z-index: 100;
 }
 
+/* Estilo para el botón de cierre */
 .popup-cerrar {
-    position: absolute;
+    z-index: 99;
+    position: relative !important;
     top: 10px;
-    right: 15px;
+    left: 90% !important;
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
+}
+
+/* Estilos adicionales para el formulario dentro del popup */
+.form-group {
+    margin-bottom: 15px;
+    width: 200px !important;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group select {
+    width: 333px !important;
+        padding: 10px;
+    margin: 0; /* Eliminar márgenes innecesarios */
+    box-sizing: border-box; /* Incluir padding y border en el cálculo del ancho */
+}
+
+/* Estilo para el botón de guardar */
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
 }

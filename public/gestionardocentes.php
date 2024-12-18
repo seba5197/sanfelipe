@@ -25,10 +25,10 @@ $formulario = new Formularios();
     <header>
         <!-- Aquí puede ir una barra de navegación o contenido relacionado -->
     </header>
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <h1 class="mobile">Bienvenido a Mi Página</h1>
+            <div class="col-md-8">
+                <h1 class="mobile">Gestión docente</h1>
             </div>
 
 <?php
@@ -59,7 +59,14 @@ mostrarTablaDocentes($docentes);
                     </div>
                 </div>
             </div>
-
+            <div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Contenido aquí -->
+      <p>Este es un contenedor que ocupa las 12 columnas en pantallas medianas o superiores.</p>
+    </div>
+  </div>
+</div>
             <!-- Menú lateral (solo en pantallas grandes) -->
             <?php
                 // Llamar a la función para generar el menú lateral

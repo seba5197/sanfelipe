@@ -31,7 +31,8 @@ $formulario = new Formularios();
     </header>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12" id="popup">
+            <div class="col-md-12 pop" id="popup"></div>
+            <div class="col-md-12" >
         
         <?php 
            $horarios = [

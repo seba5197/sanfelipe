@@ -46,35 +46,36 @@ $docentes = [
 
 // Función para mostrar la tabla de docentes
 function mostrarTablaDocentes($docentes) {
-    echo '<table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>RUT</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Asignaturas</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>';
+    echo '<div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>RUT</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Asignaturas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>';
 
     // Iteramos sobre la lista de docentes y mostramos una fila para cada uno
     foreach ($docentes as $docente) {
         echo '<tr>
-                <td>' . $docente['nombre'] . '</td>
-                <td>' . $docente['rut'] . '</td>
-                <td>' . $docente['correo'] . '</td>
-                <td>' . $docente['telefono'] . '</td>
-                <td>' . implode(", ", $docente['asignaturas']) . '</td>
+                <td>' . htmlspecialchars($docente['nombre']) . '</td>
+                <td>' . htmlspecialchars($docente['rut']) . '</td>
+                <td>' . htmlspecialchars($docente['correo']) . '</td>
+                <td>' . htmlspecialchars($docente['telefono']) . '</td>
+                <td>' . htmlspecialchars(implode(", ", $docente['asignaturas'])) . '</td>
                 <td>
                     <button class="btn btn-warning btn-sm" 
-                            data-id="' . $docente['id'] . '" 
+                            data-id="' . htmlspecialchars($docente['id']) . '" 
                             onclick="editarDocente(this)">
                         <i class="fas fa-pencil-alt"></i> Editar
                     </button>
                     <button class="btn btn-danger btn-sm" 
-                            data-id="' . $docente['id'] . '" 
+                            data-id="' . htmlspecialchars($docente['id']) . '" 
                             onclick="eliminarDocente(this)">
                         <i class="fas fa-trash-alt"></i> Borrar
                     </button>
@@ -82,8 +83,11 @@ function mostrarTablaDocentes($docentes) {
             </tr>';
     }
 
-    echo '</tbody></table>';
+    echo '</tbody>
+        </table>
+    </div>';
 }
+
 
 
 ?>

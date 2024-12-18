@@ -1,11 +1,5 @@
 <?php
-//constantes de conexión BD
 
-// Definir constantes para la conexión a la base de datos
-define('DB_HOST', 'localhost');  // Dirección del servidor
-define('DB_NAME', 'websanfelipe');  // Nombre de la base de datos
-define('DB_USER', 'sanfelipe');  // Usuario de la base de datos
-define('DB_PASS', 'sQr.C43HGP]lw44K');  // Contraseña del usuario
 
 
 //carga de archivos de configuración
@@ -13,6 +7,7 @@ include_once("../includes/head.php");
 include_once("../includes/footer.php");
 include_once("roles.php");
 include_once("../includes/menu.php");
+include_once("constantes.php");
 //include_once("../lib/conexion.php");
 
 

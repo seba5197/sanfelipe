@@ -15,46 +15,22 @@ $profesores = ["Profesor 1", "Profesor 2", "Profesor 3", "Profesor 4", "Profesor
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup Dinámico</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="http://localhost/websanfelipe/assets/css/popup.css" rel="stylesheet" />
     <style>
         /* Estilos para centrar el popup */
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        .popup-content {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        .popup-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group select {
-            width: 100%;
-        }
+     
     </style>
 </head>
 <body>
 
+
 <div class="popup-content">
+<span class="popup-cerrar btn btn-danger" onclick="cerrarPopup()">×</span>
+<div id="popup" class="popup-overlay">
+    <div class="popup-contenido">
+       
+    </div>
+</div>
     <div class="popup-header">
         <h3>Horario del Día: <?php echo $dia; ?></h3>
         <h4>Hora: <?php echo $id; ?></h4>
@@ -72,7 +48,7 @@ $profesores = ["Profesor 1", "Profesor 2", "Profesor 3", "Profesor 4", "Profesor
         </div>
 
         <!-- Profesor -->
-        <div class="form-group">
+        <div class="form-group" id="cargaprofe">
             <label for="profesor">Profesor</label>
             <select id="profesor" name="profesor" class="form-control">
                 <?php foreach ($profesores as $profesor): ?>
