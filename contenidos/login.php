@@ -5,7 +5,7 @@
         <div class="fullscreen-container">
             <form class="login-form"  action="../controladores/login.php" method="post">
                 <h2>Iniciar Sesión</h2>
-                <input type="text" name="username" placeholder="Nombre de usuario" required>
+                <input type="text" name="username" placeholder="Correo o rut sin punto ni guión" required>
                 <input type="password" name="password" placeholder="Contraseña" required>
                 <input type="submit" value="Ingresar">
                 <p class="recover-password">

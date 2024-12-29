@@ -3,8 +3,8 @@
 include_once("../config/config.php");
 include_once("../contenidos/creadores.php");
 include_once("../contenidos/horario.php");
-include_once("../contenidos/listas.php");
 
+validasesion();
 // Validar rol
 validarRol(['admin', 'coordinador']);
 $formulario = new Formularios();
@@ -25,53 +25,39 @@ $formulario = new Formularios();
     <header>
         <!-- Aquí puede ir una barra de navegación o contenido relacionado -->
     </header>
+    
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
-                <h1 class="mobile">Gestión docente</h1>
+            <div class="col-md-12">
+                <h1 class="table-responsive mobile">Gestión docente actualizado</h1>
             </div>
-
-<?php
+  <!-- Botón para abrir el me   nú lateral en dispositivos móviles -->
+  <button class="btn btn-primary d-md-none" id="sidebarToggleBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+             <!-- Menú lateral (solo en pantallas grandes) -->
+             <?php
+                // Llamar a la función para generar el menú lateral
+             generateSidebarMenu("Gestionar docentes", $userName, $userRole);
+            ?>
+            <?php
 // Llamada a la función para mostrar la tabla
 mostrarTablaDocentes($docentes);
 ?>
 
-            <!-- Botón para abrir el modal (popup) -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
-                Crear Docente
-            </button>
 
-            <!-- Modal (Popup) con el formulario -->
-            <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="formModalLabel">Formulario para Crear Docente</h5>
-                            <!-- Botón de cierre con la X -->
-                            <button type="button" class="btn-close btn btn-danger" data-bs-dismiss="modal" aria-label="Cerrar">X</button>
-                        </div>
-                        <div class="modal-body">
-                            <?php 
-                                // Llamar al formulario dentro del modal
-                                $formulario->crearFormularioDocente();
-                            ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
+
             <div class="container">
   <div class="row">
     <div class="col-md-12">
       <!-- Contenido aquí -->
-      <p>Este es un contenedor que ocupa las 12 columnas en pantallas medianas o superiores.</p>
+      
     </div>
   </div>
 </div>
-            <!-- Menú lateral (solo en pantallas grandes) -->
-            <?php
-                // Llamar a la función para generar el menú lateral
-                generateSidebarMenu("Gestionar docentes", $userName, $userRole);
-            ?>
+           
 
         </div>
     </div>

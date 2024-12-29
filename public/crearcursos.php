@@ -3,7 +3,9 @@
 include_once("../config/config.php");
 include_once("../contenidos/creadores.php");
 include_once("../contenidos/horario.php");
+include_once("../controladores/cursos.php");
 
+validasesion();
 //validar rol
 validarRol(['admin', 'coordinador','docente']);
 $formulario = new Formularios();
@@ -29,11 +31,13 @@ $formulario = new Formularios();
         
         <!-- Aquí puede ir una barra de navegación o contenido relacionado -->
     </header>
+    
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 ">
         <h1 class="mobile" >Bienvenido a Mi Página</h1>
             </div>
+
         <!-- Botón para abrir el menú lateral en dispositivos móviles -->
         <button class="btn btn-primary d-md-none" id="sidebarToggleBtn">
                 <i class="fas fa-bars"></i>
@@ -44,14 +48,25 @@ $formulario = new Formularios();
                 generateSidebarMenu("Gestionar cursos", $userName, $userRole);
             ?>
 
-            <!-- Contenido Principal -->
+        
+        </div>
+      
+        
+
+            <div class="col-md-6">
+                
             <?php 
+            
             $formulario->crearFormularioCurso();
          
         ?>
-        </div>
-      
+
+            </div>
+           
        
+        <?php
+listarCursosEnGrid();
+?>   
     </div>
 
  

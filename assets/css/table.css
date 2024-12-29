@@ -1,0 +1,10 @@
+.table-responsive {
+    position: relative;
+}
+
+@media (min-width: 992px) {
+    .table-responsive {
+        margin-left: 5%;
+    }
+}
+

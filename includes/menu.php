@@ -9,10 +9,12 @@ function menuAdmin() {
         "Inicio" => "index.php",
         "Gestionar docentes" => "gestionardocentes.php",
         "Gestionar cursos" => "crearcursos.php",
+        "Gestionar salas" => "crearsalas.php",
+
         "Gestionar alumnos" => "crearalumnos.php",
         "Gestionar asignaturas" => "crearasignaturas.php",
-        "Horario docentes" => "horariodocente.php",
-        "Informes" => "#"
+        "Gestionar Horario" => "crearhorarios.php",
+       
     ];
 }
 
@@ -40,9 +42,9 @@ function menuCoordinador() {
 function menuAlumno() {
     return [
         "Inicio" => "#",
-        "Mis Cursos" => "#",
-        "Calificaciones" => "#",
-        "Perfil" => "#"
+        "Cursos" => "#",
+        "Horario" => "#",
+        
     ];
 }
 
@@ -78,6 +80,7 @@ function generateSidebarMenu($activePage = "", $userName = "Juan Pérez", $userR
                 </div>
                 <h5 class="mt-2">' . htmlspecialchars($userName) . '</h5>
                 <p class="text-muted">' . htmlspecialchars($userRole) . '</p>
+                '."<p class='text-muted'><a href='../public/login.php'>Cerrar sesión</a></p>".'
             </div>
 
             <!-- Menú lateral -->

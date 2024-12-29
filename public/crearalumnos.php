@@ -4,6 +4,7 @@ include_once("../config/config.php");
 include_once("../contenidos/creadores.php");
 include_once("../contenidos/horario.php");
 
+validasesion();
 //validar rol
 validarRol(['admin', 'coordinador','docente']);
 $formulario = new Formularios();
@@ -47,11 +48,10 @@ $formulario = new Formularios();
             <!-- Contenido Principal -->
             <?php 
             $formulario->crearFormularioAlumno();
-         
+         listarAlumnos();
         ?>
         </div>
-      
-       
+    
     </div>
 
  

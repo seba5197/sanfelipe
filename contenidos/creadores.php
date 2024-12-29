@@ -1,12 +1,15 @@
 <?php
-//crear formulario
+//crear formularios
 class Formularios {
 
+// $url=protegerURL("URL POST"); asigna un token valido para seguridad 
+    
     // Función para crear el formulario de Crear Docente
     public function crearFormularioDocente() {
+        $url=protegerURL("../controladores/docentes.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-crear-docente" action="../controladores/crear_docente.php" method="post" enctype="multipart/form-data">
+            <form class="formulario-crear-docente" action="'.$url.'" method="post" enctype="multipart/form-data">
                 <h2>Crear Docente</h2>
                 <div class="form-group">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" required>
@@ -37,12 +40,13 @@ class Formularios {
 
     // Función para crear el formulario de Crear Asignatura
     public function crearFormularioAsignatura() {
+        $url=protegerURL("../controladores/asignaturas.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-crear-asignatura" action="../controladores/crear_asignatura.php" method="post">
+            <form class="formulario-crear-asignatura" action="'.$url.'"" method="post">
                 <h2>Crear Asignatura</h2>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="nombre_asignatura" placeholder="Nombre de la asignatura" required>
+                    <input type="text" class="form-control" name="asignatura" placeholder="Nombre de la asignatura" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Crear Asignatura</button>
             </form>
@@ -51,26 +55,35 @@ class Formularios {
 
     // Función para crear el formulario de Crear Curso
     public function crearFormularioCurso() {
+        $url=protegerURL("../controladores/cursos.php");
         echo '
-        <div class="fullscreen-container">
-            <form class="formulario-crear-curso" action="../controladores/crear_curso.php" method="post">
+      
+                    <form class="formulario-crear-curso" action="'.$url.'" method="post">
                 <h2>Crear Curso</h2>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="nombre_curso" placeholder="Nombre del curso" required>
+                    <input type="text" class="form-control" name="curso" placeholder="Nombre del curso" required>
+                    <select class="form-control" name="nivel" required>
+    <option value="" disabled selected>Seleccione el nivel</option>
+    <option value="basica">Básica</option>
+    <option value="media">Media</option>
+    <option value="kinder">Kinder</option>
+</select>
+
                 </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="sala" placeholder="Sala" required>
-                </div>
+               
                 <button type="submit" class="btn btn-primary">Crear Curso</button>
             </form>
-        </div>';
+        
+        
+        ';
     }
 
     // Función para crear el formulario de Crear Sala
     public function crearFormularioSala() {
+        $url=protegerURL("../controladores/salas.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-crear-sala" action="../controladores/crear_sala.php" method="post">
+            <form class="formulario-crear-sala" action="'.$url.'" method="post">
                 <h2>Crear Sala</h2>
                 <div class="form-group">
                     <input type="text" class="form-control" name="nombre_sala" placeholder="Nombre de la sala" required>
@@ -80,23 +93,41 @@ class Formularios {
         </div>';
     }
 
-    // Función para crear el formulario de Crear Alumno
-    public function crearFormularioAlumno() {
+
+    public function crearFormularioHorario() {
+        $url=protegerURL("../controladores/horarios.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-crear-alumno" action="../controladores/crear_alumno.php" method="post">
+            <form class="formulario-crear-sala" action="'.$url.'" method="post">
+                <h2>Crear Sala</h2>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="nombre_sala" placeholder="Nombre del horario" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Crear horario</button>
+            </form>
+        </div>';
+    }
+
+
+    // Función para crear el formulario de Crear Alumno
+    public function crearFormularioAlumno() {
+        $url=protegerURL("../controladores/alumnos.php");
+        echo '
+        <div class="fullscreen-container">
+            <form class="formulario-crear-alumno" action="'.$url.'" method="post">
                 <h2>Crear Alumno</h2>
                 <div class="form-group">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="apellido" placeholder="Apellido" required>
+                    <input type="text" class="form-control" name="apellidos" placeholder="Apellidos" required>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" name="rut" placeholder="RUT" required>
                 </div>
                 <div class="form-group">
                     <!-- Campo para la fecha de nacimiento -->
+                    Fecha de nacimiento<br>
                     <input type="date" class="form-control" name="fecha_nacimiento" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Crear Alumno</button>
@@ -130,9 +161,10 @@ class Formularios {
 
     // Función para crear el formulario de Relación Docente y Asignaturas
     public function crearFormularioRelacionDocenteAsignaturas() {
+        $url=protegerURL("../controladores/profesor_asignatura.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-relacion-docente-asignaturas" action="../controladores/relacion_docente_asignatura.php" method="post">
+            <form class="formulario-relacion-docente-asignaturas" action="'.$url.'" method="post">
                 <h2>Asignar Asignaturas a Docente</h2>
                 <div class="form-group">
                     <select name="docente_id" class="form-control" required>
@@ -153,9 +185,10 @@ class Formularios {
 
     // Función para crear el formulario de Relación Curso y Alumnos
     public function crearFormularioRelacionCursoAlumnos() {
+        $url=protegerURL("../controladores/curso_alumno.php");
         echo '
         <div class="fullscreen-container">
-            <form class="formulario-relacion-curso-alumnos" action="../controladores/relacion_curso_alumno.php" method="post">
+            <form class="formulario-relacion-curso-alumnos" action="'.$url.'" method="post">
                 <h2>Asignar Alumnos a Curso</h2>
                 <div class="form-group">
                     <select name="curso_id" class="form-control" required>

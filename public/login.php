@@ -1,9 +1,12 @@
 <?php
+
+
 // Carga configuración completa
 include_once("../config/config.php");
 include_once("../contenidos/login.php");
-// Incluye las clases necesarias para el encabezado y pie de página
-
+// Llamar a la función para verificar el primer uso
+verificarPrimerUso();
+session_destroy();
 
 // Crea una instancia del generador de encabezado
 ?>

@@ -3,7 +3,7 @@
 include_once("../config/config.php");
 
 // Incluye las clases necesarias para el encabezado y pie de página
-
+validasesion();
 
 // Crea una instancia del generador de encabezado
 ?>
