@@ -7,6 +7,27 @@ validasesion();
 //validar rol
 validarRol(['admin', 'coordinador']);
 $formulario = new Formularios();
+validarURL();
+if (isset($_GET['codigo'])) {
+    // Obtener el valor del parámetro 'codigo' de la URL
+    $codigo = $_GET['codigo'];
+    echo "El código es: " . htmlspecialchars($codigo);
+} else {
+    // Mostrar mensaje si el parámetro 'codigo' no está en la URL
+    echo "El código no está disponible. Serás redirigido a la página anterior en <span id='countdown'>3</span> segundos.";
+    echo "<script>
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown');
+            const interval = setInterval(function() {
+                countdown--;
+                countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    window.history.back(); // Redirige a la página anterior
+                }
+            }, 1000); // Actualiza el contador cada segundo
+          </script>";
+}
 
 
 // Incluye las clases necesarias para el encabezado y pie de página
@@ -18,6 +39,8 @@ $formulario = new Formularios();
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <?php
         $header = new HeaderGenerator("Inicio Colegio San Felipe", ["menu.css"]);
         $header->renderHeader();
@@ -31,25 +54,14 @@ $formulario = new Formularios();
     </header>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 pop" id="popup"></div>
-            <div class="col-md-12" >
+        
+
         
         <?php 
-           $horarios = [
-            //new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024","sala","codigo curso"),
-            new Horario(1, "08:00 - 08:45", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(2, "08:45 - 09:30", "Matemática", "Profesor 1", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(3, "09:30 - 10:15", "Lenguaje", "Profesor 2", "3°A", "Martes", "28/11/2024", "28/12/2024"),
-            new Horario(4, "10:15 - 11:00", "Ciencias", "Profesor 3", "3°A", "Miércoles", "28/11/2024", "28/12/2024"),
-            new Horario(5, "11:00 - 11:45", "Historia", "Profesor 4", "3°A", "Jueves", "28/11/2024", "28/12/2024"),
-            new Horario(6, "11:45 - 12:30", "Inglés", "Profesor 5", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
-            new Horario(7, "12:30 - 13:00", "Educación Física", "Profesor 6", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(8, "14:00 - 14:45", "Artes", "Profesor 7", "3°A", "Lunes", "28/11/2024", "28/12/2024"),
-            new Horario(9, "14:45 - 15:30", "Tecnología", "Profesor 8", "3°A", "Viernes", "28/11/2024", "28/12/2024"),
-        ];
+           
         $titulo="titulo "; 
-           generarHorario($titulo, $horarios);
-        ?>
+// Llamada a la función para mostrar los horarios
+mostrarHorariosPorCodigo("$codigo");        ?>
             </div>
         <!-- Botón para abrir el menú lateral en dispositivos móviles -->
         <button class="btn btn-primary d-md-none" id="sidebarToggleBtn">
@@ -75,7 +87,6 @@ $formulario = new Formularios();
     $footer = new FooterGenerator(["menu.js"]);
     $footer->renderFooter();
     ?>
-
 
 </body>
 </html>

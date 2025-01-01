@@ -38,25 +38,31 @@ function crearAlumno($nombre, $apellidos, $rut, $fechaNacimiento) {
 
 function editarAlumno($idAlumno, $nombre, $apellidos, $rut, $fechaNacimiento) {
     try {
+        // Conexión a la base de datos
         $conn = getDbConnection();
 
-        $sql = "UPDATE alumno SET nombre = :nombre, apellidos = :apellidos, rut = :rut, fecha de nacimiento = :fecha_nacimiento WHERE id_alumno = :id_alumno";
+        // Verifica si la fecha está en el formato correcto
+        $fechaNacimiento = date('Y-m-d', strtotime($fechaNacimiento));
+
+        // Consulta SQL para actualizar
+        $sql = "UPDATE alumno SET `nombre` = :nombre, `apellidos` = :apellidos, `rut` = :rut, `fecha de nacimiento` = :fechaNacimiento WHERE `id_alumno` = :idAlumno";
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
+        // Vinculamos los parámetros
         $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $stmt->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
         $stmt->bindParam(':rut', $rut, PDO::PARAM_STR);
-        $stmt->bindParam(':fecha_nacimiento', $fechaNacimiento, PDO::PARAM_STR);
+        $stmt->bindParam(':fechaNacimiento', $fechaNacimiento, PDO::PARAM_STR);  // Usar el nombre correcto de la variable
+        $stmt->bindParam(':idAlumno', $idAlumno, PDO::PARAM_INT);
 
+        // Ejecutamos la consulta
         $stmt->execute();
 
-        echo "Alumno editado exitosamente.";
+        echo "Alumno actualizado con éxito.";
     } catch (PDOException $e) {
-        die("Error al editar el alumno: " . $e->getMessage());
+        echo "Error al actualizar el alumno: " . $e->getMessage();
     }
 }
-
 function eliminarAlumno($idAlumno) {
     try {
         $conn = getDbConnection();
@@ -165,42 +171,51 @@ function obtenerAlumnoPorRut($rut) {
 function listarHorarios() {
     try {
         $conn = getDbConnection();
-
         // Consulta SQL para obtener todos los horarios
         $sql = "SELECT * FROM nombreshorarios";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-
         $horarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         if ($horarios) {
             echo '<table class="table">';
             echo '<thead>';
             echo '<tr>';
-            echo '<th>ID</th><th>Nombre</th><th>Descripción</th><th>Código</th><th>Acciones</th>';
+            echo '<th>Curso</th><th>Nombre</th><th>Descripción</th><th>Código</th><th>Acciones</th>';
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
 
             foreach ($horarios as $horario) {
                 $horario_id = $horario['id_nombrehorario'];
-                $urleditar = protegerURL('../controladores/horarios.php?opcion=editar&id=' . $horario_id);
+                $codigo = $horario['codigo'];
+                $resultado = buscarCursoPorHorario($codigo);
+
+// Asignar el valor de $curso dependiendo de si $resultado es un array o no
+if (is_array($resultado)) {
+    // Si $resultado es un array, asignar el valor de 'curso' a la variable $curso
+    $curso = $resultado['curso'];
+} else {
+    // Si $resultado no es un array, asignar el mensaje de error a la variable $curso
+    $curso = $resultado;
+}
+
+                $urleditar = protegerURL('../controladores/horarios.php?opcion=editar&codigo=' . $codigo);
                 $urleliminar = protegerURL('../controladores/horarios.php?opcion=eliminar&id=' . $horario_id);
-                $urlasignarcurso = protegerURL('../controladores/horarios.php?opcion=asignarcurso&id=' . $horario_id);
-                
+                $urlasignarcurso = protegerURL('../controladores/horarios.php?opcion=asignarcursohorario&codigo=' . $codigo);
+                $urlver = protegerURL('horariocompleto.php?codigo=' . $codigo);
                 echo '<tr>';
-                echo '<td>' . htmlspecialchars($horario['id_nombrehorario']) . '</td>';
+                echo '<td>' . htmlspecialchars($curso) . '</td>';
                 echo '<td>' . htmlspecialchars($horario['nombre']) . '</td>';
                 echo '<td>' . htmlspecialchars($horario['descripcion']) . '</td>';
                 echo '<td>' . htmlspecialchars($horario['codigo']) . '</td>';
                 echo '<td>';
+                echo '<a href="' . $urlver . '" class="btn btn-success">ver</a> '; 
                 echo '<a href="' . $urleditar . '" class="btn btn-primary">Editar</a> '; 
                 echo '<a href="' . $urleliminar . '" class="btn btn-danger" onclick="return confirm(\'¿Estás seguro de eliminar este horario?\');">Eliminar</a> ';
                 echo '<a href="' . $urlasignarcurso . '" class="btn btn-success">Asignar Curso</a>';
                 echo '</td>';
                 echo '</tr>';
             }
-
             echo '</tbody>';
             echo '</table>';
         } else {

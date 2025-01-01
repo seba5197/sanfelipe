@@ -97,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
         // Destruir la sesión
         session_destroy();
+        header("Location: ../public/login.php?mensaje=error");
     }
 } else {
     // Si se accede directamente al archivo, redirigir al formulario de inicio de sesión

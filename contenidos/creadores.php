@@ -55,38 +55,43 @@ class Formularios {
 
     // Función para crear el formulario de Crear Curso
     public function crearFormularioCurso() {
-        $url=protegerURL("../controladores/cursos.php");
+        $url=protegerURL("../controladores/cursos.php?opcion=crear");
         echo '
-      
-                    <form class="formulario-crear-curso" action="'.$url.'" method="post">
-                <h2>Crear Curso</h2>
+        <div class="fullscreen-container">
+            <form class="formulario-crear-curso" action="' . htmlspecialchars($url) . '" method="post">
+                <h2 class="text-center">Crear Curso</h2>
                 <div class="form-group">
                     <input type="text" class="form-control" name="curso" placeholder="Nombre del curso" required>
-                    <select class="form-control" name="nivel" required>
-    <option value="" disabled selected>Seleccione el nivel</option>
-    <option value="basica">Básica</option>
-    <option value="media">Media</option>
-    <option value="kinder">Kinder</option>
-</select>
-
                 </div>
-               
-                <button type="submit" class="btn btn-primary">Crear Curso</button>
+                <div class="form-group">
+                    <select class="form-control" name="nivel" required>
+                        <option value="" disabled selected>Seleccione el nivel</option>';
+        
+                        // Iterar sobre los niveles y agregar las opciones dinámicamente
+                        foreach (NIVELES as $value => $label) {
+                            echo '<option value="' . $value . '">' . $label . '</option>';
+                        }
+        
+        echo '
+                    </select>
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Crear Curso</button>
+                </div>
             </form>
-        
-        
-        ';
+        </div>';
     }
 
     // Función para crear el formulario de Crear Sala
     public function crearFormularioSala() {
-        $url=protegerURL("../controladores/salas.php");
+        $url=protegerURL("../controladores/salas.php?opcion=crearsala");
         echo '
         <div class="fullscreen-container">
             <form class="formulario-crear-sala" action="'.$url.'" method="post">
                 <h2>Crear Sala</h2>
                 <div class="form-group">
                     <input type="text" class="form-control" name="nombre_sala" placeholder="Nombre de la sala" required>
+                    <input type="number" class="form-control" name="capacidad" placeholder="Capacidad de la sala" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Crear Sala</button>
             </form>
@@ -95,13 +100,15 @@ class Formularios {
 
 
     public function crearFormularioHorario() {
-        $url=protegerURL("../controladores/horarios.php");
+        $url=protegerURL("../controladores/horarios.php?opcion=crearhorario");
         echo '
         <div class="fullscreen-container">
             <form class="formulario-crear-sala" action="'.$url.'" method="post">
-                <h2>Crear Sala</h2>
+                <h2>Crear Horario</h2>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="nombre_sala" placeholder="Nombre del horario" required>
+                    <input type="text" class="form-control" name="nombre_horario" placeholder="Nombre del horario" required>
+                    <input type="text"  style="text-transform: uppercase;" class="form-control" name="codigo_horario" placeholder="Codigo del horario" required>
+                    <input type="text" class="form-control" name="descripcion" placeholder="Descripción del horario">
                 </div>
                 <button type="submit" class="btn btn-primary">Crear horario</button>
             </form>

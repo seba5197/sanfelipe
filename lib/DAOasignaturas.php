@@ -71,17 +71,23 @@ function mostrarAsignaturasConProfesor() {
                     $nombresProfesores .= $profesor['nombre'] ." ".$profesor['apellido']. ', '; // Concatenar los nombres
                 }
             }
-
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($asignatura['id_asignaturas']) . '</td>';
-            echo '<td>' . htmlspecialchars($asignatura['asignatura']) . '</td>';
-              //muestra profesor columna 
-           // echo '<td>' .$nombresProfesores . '</td>';
-            echo '<td>';
-            echo '<a href="' .  $urleditar . '" class="btn btn-primary btn-sm">Editar</a> ';
-            echo '<a href="' .  $urlelimnar . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Estás seguro de eliminar esta asignatura?\');">Eliminar</a>';
-            echo '</td>';
-            echo '</tr>';
+            if ($asignatura['id_asignaturas'] != 99) {
+                // Aquí va el código que deseas mostrar cuando el id_asignaturas no sea igual a 99
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($asignatura['id_asignaturas']) . '</td>';
+                echo '<td>' . htmlspecialchars($asignatura['asignatura']) . '</td>';
+                  //muestra profesor columna 
+               // echo '<td>' .$nombresProfesores . '</td>';
+                echo '<td>';
+                echo '<a href="' .  $urleditar . '" class="btn btn-primary btn-sm">Editar</a> ';
+                echo '<a href="' .  $urlelimnar . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Estás seguro de eliminar esta asignatura?\');">Eliminar</a>';
+                echo '</td>';
+                echo '</tr>';
+            } else {
+                // Opcional: si el ID es igual a 99, puedes manejar otra acción
+                
+            }
+           
         }
         echo '</tbody>';
         echo '</table>';
@@ -221,14 +227,13 @@ function eliminarAsignatura($id_asignatura) {
 }
 
 
-
 function obtenerProfesoresPorAsignatura($idAsignatura) {
     try {
         // Conexión a la base de datos
         $conn = getDbConnection();
 
-        // Consulta SQL para obtener los profesores por asignatura
-        $sql = "SELECT profesor FROM `profesor-asignatura` WHERE asignatura = :idAsignatura";
+        // Consulta SQL para obtener todos los registros relacionados con la asignatura
+        $sql = "SELECT `profesor` FROM `profesor-asignatura` WHERE asignatura = :idAsignatura";
 
         // Preparar la consulta
         $stmt = $conn->prepare($sql);
@@ -240,14 +245,33 @@ function obtenerProfesoresPorAsignatura($idAsignatura) {
         $stmt->execute();
 
         // Obtener los resultados
-        $profesores = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        
+        $profesores = $stmt->fetchAll(PDO::FETCH_ASSOC); // Cambiado a fetchAll(PDO::FETCH_ASSOC)
 
-        
-        // Retornar la lista de IDs de profesores
+        // Verificar si no hay registros
+        if (empty($profesores)) {
+            $profesores[] = ['id_profesor' => 99, 'profesor' => '99']; // Agregar el valor predeterminado
+        }
+
+        // Retornar la lista de profesores
         return $profesores;
 
     } catch (PDOException $e) {
         die("Error al obtener los profesores de la asignatura: " . $e->getMessage());
+    }
+}
+
+
+
+function obtenerAsignaturas() {
+    try {
+        $conn = getDbConnection();
+        $sql = "SELECT * FROM `asignaturas`"; // Consulta para obtener todas las asignaturas
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Devuelve todas las asignaturas como un array asociativo
+    } catch (PDOException $e) {
+        echo "Error al obtener las asignaturas: " . $e->getMessage();
+        return [];
     }
 }

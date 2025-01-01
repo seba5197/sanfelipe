@@ -76,3 +76,7 @@
 .edit-icon:hover .edit-icon-img {
     filter: brightness(1.2);
 }
+.contenido {
+    width: 100%;
+    margin: 20px 0;
+}

@@ -54,6 +54,11 @@ function listarSalasEnGrid() {
 
             $contador = 0;
             foreach ($salas as $sala) {
+
+                $urleditar = protegerURL('../controladores/salas.php?opcion=editar&id_sala='.$sala['id_salas']);
+                $urleliminar = protegerURL('../controladores/salas.php?opcion=eliminar&id_sala='.$sala['id_salas']);
+
+                
                 if ($contador % 3 == 0 && $contador != 0) {
                     echo '</div><div class="row">';
                 }
@@ -63,8 +68,8 @@ function listarSalasEnGrid() {
                 echo '<div class="card-body">';
                 echo '<h5 class="card-title">Sala: ' . htmlspecialchars($sala['sala']) . '</h5>';
                 echo '<p class="card-text">Capacidad: ' . htmlspecialchars($sala['capacidad']) . '</p>';
-                echo '<a href="editar_sala.php?id_sala=' . $sala['id_salas'] . '" class="btn btn-primary">Editar</a> ';
-                echo '<a href="eliminar_sala.php?id_sala=' . $sala['id_salas'] . '" class="btn btn-danger" onclick="return confirm(\'¿Estás seguro de eliminar esta sala?\');">Eliminar</a>';
+                echo '<a href="' .$urleditar . '" class="btn btn-primary">Editar</a> ';
+                echo '<a href="' .$urleliminar . '" class="btn btn-danger" onclick="return confirm(\'¿Estás seguro de eliminar esta sala?\');">Eliminar</a>';
                 echo '</div>';
                 echo '</div>';
                 echo '</div>';
@@ -108,8 +113,12 @@ function listarSalasPorIdCurso($id_curso) {
 
             // Mostrar las salas como una lista separada por comas
             echo 'Sala asignada: ' . implode(', ', $salasNombres);
+            $url=protegerURL("../controladores/cursos.php?opcion=asignarsala&id=$id_curso");
+            echo '<br><a href="'.$url.'" class="btn btn-info">Editar Sala</a>';
         } else {
-            echo 'No hay salas asociadas con este curso.';
+
+            $url=protegerURL("../controladores/cursos.php?opcion=asignarsala&id=$id_curso");
+            echo '<a href="'.$url.'" class="btn btn-info">Asignar Sala</a>';
         }
     } catch (PDOException $e) {
         die("Error al obtener las salas: " . $e->getMessage());
@@ -131,5 +140,47 @@ function obtenerNombreSalaPorId($id_sala) {
         return $sala ? $sala['sala'] : null;
     } catch (PDOException $e) {
         die("Error al obtener el nombre de la sala: " . $e->getMessage());
+    }
+}
+
+
+function obtenerSalaPorId($idSala) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener la sala por ID
+        $sql = "SELECT `id_salas`, `sala`, `capacidad` FROM `salas` WHERE `id_salas` = :id_salas";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_salas', $idSala, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Verificar si se obtuvo un resultado
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return null; // No se encontró la sala con ese ID
+        }
+    } catch (PDOException $e) {
+        echo "Error al obtener la sala: " . $e->getMessage();
+    }
+}
+
+function obtenerSalas() {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta para obtener las salas
+        $sql = "SELECT id_salas, sala FROM salas";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // Retornar las salas como un array asociativo
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    } catch (PDOException $e) {
+        echo "Error al obtener las salas: " . $e->getMessage();
+        return [];
     }
 }

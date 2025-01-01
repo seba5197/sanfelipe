@@ -133,3 +133,107 @@ function listarCursosEnGrid() {
         die("Error al listar los cursos: " . $e->getMessage());
     }
 }
+
+
+function listarCursosEnSelect() {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener todos los cursos
+        $sql = "SELECT id_cursos, curso, nivel FROM cursos";
+        
+        // Preparar la sentencia
+        $stmt = $conn->prepare($sql);
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener todos los cursos
+        $cursos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Verificar si existen cursos
+        if ($cursos) {
+            // Crear el select con id 'curso' y la clase 'form-control' para la apariencia
+            echo '<select class="form-control" name="curso" id="curso">';
+            echo '<option value="">Selecciona un curso</option>';
+
+            // Recorrer los cursos y agregar cada uno como opción
+            foreach ($cursos as $curso) {
+                // Mostrar cada curso en el select con el id_cursos como value y el nombre del curso como texto
+                echo '<option value="' . htmlspecialchars($curso['curso']) . '">' . 
+                     htmlspecialchars($curso['curso']) . ' - ' . htmlspecialchars($curso['nivel']) . '</option>';
+            }
+
+            echo '</select>';  // Cerrar el select
+
+            // Agregar el script para inicializar Select2 y el buscador
+          
+        } else {
+            echo '<p>No hay cursos disponibles.</p>';
+        }
+    } catch (PDOException $e) {
+        die("Error al listar los cursos: " . $e->getMessage());
+    }
+}
+function obtenerCursoPorId($idCurso) {
+    try {
+        $conn = getDbConnection(); // Asegúrate de tener una función para obtener la conexión a la base de datos
+
+        // Consulta SQL para obtener el curso por ID
+        $sql = "SELECT id_cursos, curso, nivel FROM cursos WHERE id_cursos = :id_cursos";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_cursos', $idCurso, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $curso = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $curso;
+    } catch (PDOException $e) {
+        echo "Error al obtener el curso: " . $e->getMessage();
+    }
+}
+
+function asignarCursoSala($idCurso, $idSala) {
+    try {
+
+        eliminarCursoSala($idCurso , $idSala );
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para insertar la relación entre curso y sala
+        $sql = "INSERT INTO `curso-sala` (id_curso_sala, id_curso, id_sala) VALUES (NULL, :id_curso, :id_sala)";
+        $stmt = $conn->prepare($sql);
+
+        // Vinculamos los parámetros
+        $stmt->bindParam(':id_curso', $idCurso, PDO::PARAM_INT);
+        $stmt->bindParam(':id_sala', $idSala, PDO::PARAM_INT);
+
+        // Ejecutamos la consulta
+        $stmt->execute();
+
+        return "Curso asignado a la sala exitosamente.";
+    } catch (PDOException $e) {
+        return "Error al asignar el curso a la sala: " . $e->getMessage();
+    }
+}
+
+function eliminarCursoSala($idCurso, $idSala) {
+    try {
+        $conn = getDbConnection();
+
+        // Eliminar el registro de la tabla `curso-sala` si coincide con `id_curso` o `id_sala`
+        $sql = "DELETE FROM `curso-sala` WHERE `id_curso` = :id_curso OR `id_sala` = :id_sala";  // Uso de `OR` para eliminar con cualquiera de los dos valores
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_curso', $idCurso, PDO::PARAM_INT);
+        $stmt->bindParam(':id_sala', $idSala, PDO::PARAM_INT);
+        $stmt->execute();
+
+        echo "Registro eliminado con éxito.";
+    } catch (PDOException $e) {
+        echo "Error al eliminar el registro: " . $e->getMessage();
+    }
+}
+
+
+

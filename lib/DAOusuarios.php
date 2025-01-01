@@ -229,5 +229,29 @@ function eliminarLogicoUsuario($usuarioId) {
     }
 }
 
+function obtenerNombreUsuarioPorId($id_usuario) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener el nombre del usuario por su id
+        $sql = "SELECT nombre FROM usuarios WHERE id_usuarios = :id_usuario";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Obtener el resultado
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si el usuario existe, devolver su nombre
+        if ($usuario) {
+            return $usuario['nombre'];
+        } else {
+            return "Usuario no encontrado";
+        }
+    } catch (PDOException $e) {
+        die("Error al obtener el nombre del usuario: " . $e->getMessage());
+    }
+}
 
 ?>

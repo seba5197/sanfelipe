@@ -51,20 +51,28 @@ function mostrarTablaDocentes($docentes) {
     // Iteramos sobre la lista de docentes y mostramos una fila para cada uno
     foreach ($docentes as $docente) {
         $id = $docente['id'];
+
+        
         $urleditar = protegerURL('../controladores/usuarios.php?opcion=editar&id=' . $id);
         $urlelimnar = protegerURL('../controladores/usuarios.php?opcion=eliminar&id=' . $id);
-
-        echo '<tr>
-                <td>' . htmlspecialchars($docente['nombre']) . '</td>
-                <td>' . htmlspecialchars($docente['rut']) . '</td>
-                <td>' . htmlspecialchars($docente['correo']) . '</td>
-                <td>' . htmlspecialchars($docente['telefono']) . '</td>
-                <td>' . htmlspecialchars(implode(", ", $docente['asignaturas'])) . '</td>
-                <td>';
-                echo '<a href="' .  $urleditar . '" class="btn btn-primary btn-sm">Editar</a> ';
-            echo '<a href="' .  $urlelimnar . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Estás seguro de eliminar este docente?\');">Eliminar</a>';
-               echo' </td>
-            </tr>';
+        if ($id != 99) {
+            // Aquí va el código que deseas mostrar cuando el id_asignaturas no sea igual a 99
+            echo '<tr>
+            <td>' . htmlspecialchars($docente['nombre']) . '</td>
+            <td>' . htmlspecialchars($docente['rut']) . '</td>
+            <td>' . htmlspecialchars($docente['correo']) . '</td>
+            <td>' . htmlspecialchars($docente['telefono']) . '</td>
+            <td>' . htmlspecialchars(implode(", ", $docente['asignaturas'])) . '</td>
+            <td>';
+            echo '<a href="' .  $urleditar . '" class="btn btn-primary btn-sm">Editar</a> ';
+        echo '<a href="' .  $urlelimnar . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Estás seguro de eliminar este docente?\');">Eliminar</a>';
+           echo' </td>
+        </tr>';
+        } else {
+            // Opcional: si el ID es igual a 99, puedes manejar otra acción
+           
+        }
+        
     }
 
     echo '</tbody>

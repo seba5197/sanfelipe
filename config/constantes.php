@@ -30,4 +30,10 @@ const HORARIOS = [
     ['14:00', '14:45'],
     ['14:45', '15:30']
 ];
+
+define('NIVELES', [
+    'basica' => 'Básica',
+    'media' => 'Media',
+    'kinder' => 'Kinder'
+]);
 ?>
