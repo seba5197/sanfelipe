@@ -21,10 +21,8 @@ function menuAdmin() {
 // Menú para Docentes
 function menuDocente() {
     return [
-        "Inicio" => "#",
-        "Mis Clases" => "#",
-        "Notas" => "#",
-        "Perfil" => "#"
+        "Inicio" => "horarioprofesor.php",
+        
     ];
 }
 

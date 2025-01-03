@@ -80,3 +80,27 @@
     width: 100%;
     margin: 20px 0;
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    min-height: 100vh; /* Hace que el contenedor tenga al menos el 100% de la altura de la ventana */
+    display: flex;
+    flex-direction: column;
+}
+
+.table-responsive {
+    flex-grow: 1; /* Hace que la tabla ocupe el espacio restante */
+    overflow-y: auto; /* Permite el desplazamiento si la tabla excede el tamaño de la ventana */
+}
+
+.mobile {
+    overflow-x: auto; /* Permite el desplazamiento horizontal en dispositivos móviles */
+}
+.table-responsive {
+    max-height: 80vh;  /* Establece un límite de altura para la tabla */
+    overflow-y: auto; /* Permite desplazarse verticalmente */
+}

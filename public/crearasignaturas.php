@@ -5,7 +5,7 @@ include_once("../contenidos/creadores.php");
 include_once("../contenidos/horario.php");
 validasesion();
 //validar rol
-validarRol(['admin', 'coordinador','docente']);
+validarRol(['admin', 'coordinador']);
 $formulario = new Formularios();
 
 

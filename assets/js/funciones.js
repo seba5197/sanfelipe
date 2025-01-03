@@ -61,16 +61,19 @@ document.getElementById('descargar-pdf').addEventListener('click', function() {
 
 function imprimir(){
     var boton = document.getElementById('descargar');
-    var boton1 = document.getElementById('sidebarToggleBtn');
+    var boton1 = document.getElementById('cursos');
+    var boton2 = document.getElementById('sidebarToggleBtn');
 
     // Ocultar el botón
     boton.style.display = 'none';
     boton1.style.display = 'none';
+    boton2.style.display = 'none';
 
     // Mostrar el botón después de 3 segundos
     setTimeout(function() {
       boton.style.display = 'block';
       boton1.style.display = 'block';
+      boton2.style.display = 'block';
     }, 3000);
     window.print();
 
@@ -110,3 +113,19 @@ function cargaprofe() {
         $(".cargaprofe").html("");
     }
 }
+
+
+function aplicarBuscadorSelects() {
+    $('select').select2({
+        placeholder: "Selecciona una opción",
+        allowClear: true,
+        width: '100%'
+    });
+}
+
+$(document).ready(function () {
+    aplicarBuscadorSelects();
+});
+
+
+

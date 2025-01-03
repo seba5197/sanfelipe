@@ -104,6 +104,7 @@ function listarCursosEnGrid() {
                 $id = $curso['id_cursos'];
                 $urleditar = protegerURL('../controladores/cursos.php?opcion=editar&id=' . $id);
                 $urlelimnar = protegerURL('../controladores/cursos.php?opcion=eliminar&id=' . $id);
+                $urldetalles = protegerURL('../controladores/cursos.php?opcion=detalles&id=' . $id);
                 
                 // Crear una nueva fila cada 3 cursos
                 if ($contador % 3 == 0 && $contador != 0) {
@@ -116,6 +117,7 @@ function listarCursosEnGrid() {
                 echo '<div class="card-body">';
                 echo '<h5 class="card-title">Curso ' . htmlspecialchars($curso['curso']) .  '</h5>';
                 echo '<p class="card-text">Nivel: ' . htmlspecialchars($curso['nivel']) . '</p>';
+                echo '<a href="'.$urldetalles . '" class="btn btn-success">ver alumnos</a> ';
                 echo '<a href="'.$urleditar . '" class="btn btn-primary">Editar</a> ';
                 echo '<a href="' .$urlelimnar . '" class="btn btn-danger" onclick="return confirm(\'¿Estás seguro de eliminar este curso?\');">Eliminar</a><hr>';
                 echo listarSalasPorIdCurso($curso['id_cursos']).'</div>';
@@ -162,6 +164,48 @@ function listarCursosEnSelect() {
             foreach ($cursos as $curso) {
                 // Mostrar cada curso en el select con el id_cursos como value y el nombre del curso como texto
                 echo '<option value="' . htmlspecialchars($curso['curso']) . '">' . 
+                     htmlspecialchars($curso['curso']) . ' - ' . htmlspecialchars($curso['nivel']) . '</option>';
+            }
+
+            echo '</select>';  // Cerrar el select
+
+            // Agregar el script para inicializar Select2 y el buscador
+          
+        } else {
+            echo '<p>No hay cursos disponibles.</p>';
+        }
+    } catch (PDOException $e) {
+        die("Error al listar los cursos: " . $e->getMessage());
+    }
+}
+
+function listarCursosEnSelectid() {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener todos los cursos
+        $sql = "SELECT id_cursos, curso, nivel FROM cursos";
+        
+        // Preparar la sentencia
+        $stmt = $conn->prepare($sql);
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener todos los cursos
+        $cursos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Verificar si existen cursos
+        if ($cursos) {
+            // Crear el select con id 'curso' y la clase 'form-control' para la apariencia
+            echo '<select class="form-control" name="id_curso" id="curso">';
+            echo '<option value="">Selecciona un curso</option>';
+
+            // Recorrer los cursos y agregar cada uno como opción
+            foreach ($cursos as $curso) {
+                // Mostrar cada curso en el select con el id_cursos como value y el nombre del curso como texto
+                echo '<option value="' . htmlspecialchars($curso['id_cursos']) . '">' . 
                      htmlspecialchars($curso['curso']) . ' - ' . htmlspecialchars($curso['nivel']) . '</option>';
             }
 
@@ -237,3 +281,105 @@ function eliminarCursoSala($idCurso, $idSala) {
 
 
 
+function obtenerCursoPorCodigo($codigoHorario) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener el curso por código de horario
+        $sql = "SELECT curso FROM `curso-horario` WHERE horario = :codigoHorario";
+
+        // Preparar la consulta
+        $stmt = $conn->prepare($sql);
+
+        // Asociar el parámetro
+        $stmt->bindParam(':codigoHorario', $codigoHorario, PDO::PARAM_STR);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el curso correspondiente
+        $curso = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si no se encuentra el curso, retornar un mensaje
+        if (!$curso) {
+            return "No se encontró un curso para el código proporcionado.";
+        }
+
+        // Retornar el curso
+        return $curso['curso'];
+
+    } catch (PDOException $e) {
+        // Manejo de errores
+        return "Error al obtener el curso: " . $e->getMessage();
+    }
+}
+
+
+function obtenerCursoPorIdAlumno($idAlumno) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener la relación entre el alumno y el curso
+        $sql = "SELECT * FROM `alumno-curso` WHERE `id_alumno` = :id_alumno";
+        
+        // Preparar y ejecutar la consulta
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Obtener el resultado de la consulta
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            // Si existe una relación entre el alumno y el curso, retornamos el resultado
+            return $resultado; // Devuelve el registro de la relación entre alumno y curso
+        } else {
+            // Si no se encuentra relación, retornamos un mensaje indicando que no existe
+            return "No se encuentra curso asignado para este alumno.";
+        }
+    } catch (PDOException $e) {
+        die("Error al obtener la relación del curso: " . $e->getMessage());
+    }
+}
+function obtenerCodigoHorarioPorCurso($curso) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta para obtener el código de horario asociado al curso
+        $sql = "SELECT * FROM `curso-horario` WHERE `curso` = :curso LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':curso', $curso, PDO::PARAM_STR); // Sin comillas simples
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    
+        if ($resultado) {
+
+            return $resultado['horario'];
+        } else {
+            return "Sin horario asignado";
+        }
+    } catch (PDOException $e) {
+        die("Error al obtener el código de horario: " . $e->getMessage());
+    }
+}
+
+function obtenerDatosCursoHorario($curso) {
+    try {
+        $conn = getDbConnection();
+
+        $sql = "SELECT * FROM `curso-horario` WHERE `curso` = :curso";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':curso', $curso, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        die("Error al obtener los datos del curso-horario: " . $e->getMessage());
+    }
+}

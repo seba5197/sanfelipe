@@ -110,8 +110,63 @@ function verificarUsuarioActivo($usuarioId) {
 
     // Verificar si el usuario está activo
     if ($stmt->rowCount() === 0) {
-        die("<br>usuario no activo");
+        echo "
+        <div style='text-align: center; margin-top: 50px;'>
+            <h3>Usuario no activo</h3>
+            <p>Serás redirigido a la página de login en 5 segundos...</p>
+        </div>
+        <script>
+            setTimeout(function() {
+                window.location.href = 'login.php';
+            }, 5000);
+        </script>
+    ";
+    exit; // Detiene la ejecución del script
     }
+}
+
+
+function recuperacontrasena($correo){
+
+    try {
+        // Conexión a la base de datos
+         // Asegúrate de tener tu archivo de conexión a la BD
+        $conn = getDbConnection();
+
+   
+
+        // Verificar si el correo existe en la base de datos
+        $sqlVerificar = "SELECT * FROM usuarios WHERE correo = :correo";
+        $stmtVerificar = $conn->prepare($sqlVerificar);
+        $stmtVerificar->bindParam(':correo', $correo, PDO::PARAM_STR);
+        $stmtVerificar->execute();
+
+        $usuario = $stmtVerificar->fetch(PDO::FETCH_ASSOC);
+        if ($usuario) {
+            // Generar una nueva contraseña aleatoria de 5 números
+            $nuevaContrasena = strval(rand(10000, 99999));
+            $pass = codificarPass( $nuevaContrasena);
+            echo "tu nueva clave $nuevaContrasena";
+require_once('../controladores/mail.php');
+            // Actualizar la contraseña en la base de datos
+            $sqlActualizar = "UPDATE usuarios SET pass = :pass WHERE correo = :correo";
+            $stmtActualizar = $conn->prepare($sqlActualizar);
+            $stmtActualizar->bindParam(':pass', $pass, PDO::PARAM_STR);
+            $stmtActualizar->bindParam(':correo', $correo, PDO::PARAM_STR);
+            $stmtActualizar->execute();
+
+            // Notificar al usuario
+            echo "Se envio un correo 
+            Su contraseña ha sido restablecida. La nueva contraseña es: <strong>$nuevaContrasena</strong>";
+            echo "<br><a href='login.php'>Ir al Login</a>";
+        } else {
+            echo "El correo electrónico no está registrado.";
+        }
+    } catch (PDOException $e) {
+        die("Error al recuperar la contraseña: " . $e->getMessage());
+    }
+
+
 }
 
 // Ejemplo de uso

@@ -7,7 +7,7 @@ include_once("../controladores/cursos.php");
 
 validasesion();
 //validar rol
-validarRol(['admin', 'coordinador','docente']);
+validarRol(['admin', 'coordinador']);
 $formulario = new Formularios();
 
 

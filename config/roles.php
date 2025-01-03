@@ -124,6 +124,13 @@ function validarRol($rolesPermitidos) {
     if (isset($_SESSION['rol'])) {
         // Comprobar si el rol del usuario está en el array de roles permitidos
         if (!in_array($_SESSION['rol'], $rolesPermitidos)) {
+            $paginaActual = basename($_SERVER['SCRIPT_NAME']); // Devuelve "index.php" si estás en esa página
+
+            if ($paginaActual === "index.php" && isset($_SESSION['rol']) && $_SESSION['rol'] === "docente") {
+                header("Location: horarioprofesor.php");
+                exit; // Detener la ejecución
+            }
+            
             // Si el rol no es permitido, mostrar un mensaje de error y redirigir a login.php
             echo '<script>alert("No tienes permisos suficientes para acceder a esta página."); window.location.href = "login.php";</script>';
             exit();  // Detener la ejecución del código
@@ -191,7 +198,7 @@ function asignarRolAdminAutomatico($idUsuario) {
             $stmtInsertar = $conn->prepare($sqlInsertar);
             $stmtInsertar->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
             $stmtInsertar->execute();
-
+           
             echo "La tabla estaba vacía, se asignó el rol de admin al primer usuario.";
         } else {
             //echo "La tabla ya tiene datos, no se asignó ningún rol.";
@@ -200,4 +207,61 @@ function asignarRolAdminAutomatico($idUsuario) {
         die("Error: " . $e->getMessage());
     }
 }
+
+function obtenerListaRoles() {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener todos los roles
+        $sql = "SELECT id_roles, rol FROM roles";
+
+        // Preparar y ejecutar la consulta
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // Obtener todos los resultados
+        $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $roles;
+    } catch (PDOException $e) {
+        die("Error al obtener la lista de roles: " . $e->getMessage());
+    }
+}
+function mostrarSelectRoles($roles) {
+    $select = '<select class="form-control" name="id_roles" required>';
+    $select .= '<option value="" disabled selected>Seleccione un rol</option>';
+    
+    // Recorrer los roles y agregar las opciones al select
+    foreach ($roles as $rol) {
+        $select .= '<option value="' . htmlspecialchars($rol['id_roles']) . '">' . htmlspecialchars($rol['rol']) . '</option>';
+    }
+
+    $select .= '</select>';
+    return $select;
+}
+function obtenerRolPorIddeusuario($id) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para obtener el rol del usuario por su ID
+        $sql = "SELECT * FROM `usuario-roles`
+ WHERE usuario = :id";
+
+        // Preparar y ejecutar la consulta
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si se encontró un rol, devolverlo
+        return $resultado ? $resultado['rol'] : null;
+    } catch (PDOException $e) {
+        die("Error al obtener el rol del usuario: " . $e->getMessage());
+    }
+}
+
 ?>

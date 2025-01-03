@@ -12,7 +12,7 @@ if (isset($_GET['opcion'])) {
     if ($opcion == 'editar') {
         $codigo = $_GET['codigo'];
         $horario=nombreHorarioPorCodigo($codigo);
-       $url=protegerURL("../controladores/horarios.php?opcion=actualizacionhorario");
+        $url=protegerURL("../controladores/horarios.php?opcion=actualizacionhorario");
             // Obtener los valores actuales
            
             $formulario = '
@@ -44,7 +44,32 @@ if (isset($_GET['opcion'])) {
      
         exit();
 
-    } elseif ($opcion == 'actualizacionhorario') {
+    } elseif ($opcion == 'actualizaciondetallehoradia') {
+        //guarda detalle de hora dia profesor.
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Recoger los valores enviados por POST
+            $profesor = isset($_POST['profesor']) ? htmlspecialchars($_POST['profesor']) : 99;
+            $id_horario = isset($_POST['id_horario']) ? htmlspecialchars($_POST['id_horario']) : null;
+            $asignatura = isset($_POST['asignatura']) ? htmlspecialchars($_POST['asignatura']) : 99;
+            $codigo = isset($_POST['codigo']) ? htmlspecialchars($_POST['codigo']) : null;
+            actualizarHorarioasignaturaprofesor($id_horario, $profesor, $asignatura);
+            $url=protegerURL("../public/horariocompleto.php?codigo=$codigo");
+                       header("Location: $url ");
+                       echo "<h3>Información recibida del formulario:</h3>";
+                       echo "<ul>";
+                       echo "<li><strong>Profesor:</strong> " . $profesor . "</li>";
+                       echo "<li><strong>ID Horario:</strong> " . ($id_horario !== null ? $id_horario : "No proporcionado") . "</li>";
+                       echo "<li><strong>Asignatura:</strong> " . $asignatura . "</li>";
+                       echo "<li><strong>Código:</strong> " . $codigo . "</li>";
+                       echo "</ul>";
+            } 
+die();
+
+       
+    }
+    
+    elseif ($opcion == 'actualizacionhorario') {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Recoger los valores de los campos del formulario
@@ -70,18 +95,20 @@ if (isset($_GET['opcion'])) {
         $url=protegerURL("#");
         $dia=  $horario['dia'];
         $hora=  $horario['hora']; 
+        $codigo=$horario['codigo horario'];
         $asignatura_actual=obtenerAsignaturaPorId( $horario['asignatura']);   
         $profesoractual=obtenerNombreUsuarioPorId( $horario['profesor']);    
-
+            $url=protegerURL("../controladores/horarios.php?opcion=actualizaciondetallehoradia&codigo=$codigo");
             $asignaturas = obtenerAsignaturas(); // Llama a la función para obtener las asignaturas
-            $titulo="<center><h4>Asignar Materia</h4><hr>
+            $titulo="<center><h4>Asignar Materia Horario - $codigo</h4><hr>
             <b>Día:</b> $dia <b>Horario:</b> $hora Hrs<br><b>Asignatura actual:</b> $asignatura_actual<br><b>Profesor actual:</b> $profesoractual</b>
             <hr></center>";
             $formulario =   '<div class="fullscreen-container">
-    <form class="login-form" style="position: relative;" action="' . htmlspecialchars($url) . '" method="post">'.$titulo.
-                                '<input type="hidden" name="id_horario" value="' . htmlspecialchars($dia) . '" class="dia">'.
-                                '<input type="hidden" name="id_horario" value="' . htmlspecialchars($hora) . '" class="hora">'.
+    <form class="login-form" action="' . htmlspecialchars($url) . '" method="post">'.$titulo.
+                                '<input type="hidden" name="dia" value="' . htmlspecialchars($dia) . '" class="dia">'.
+                                '<input type="hidden" name="hora" value="' . htmlspecialchars($hora) . '" class="hora">'.
                                 '<input type="hidden" name="id_horario" value="' . htmlspecialchars($id) . '" class="detalleid">'.
+                                '<input type="hidden" name="codigo" value="' . htmlspecialchars($codigo) . '" class="detalleid">'.
                             '<div class="form-group">
                                 Escoger Asignatura
                             <select class="form-control selectasignatura" name="asignatura" onchange="cargaprofe()" required>
@@ -96,9 +123,7 @@ if (isset($_GET['opcion'])) {
             <div class="form-group cargaprofe"></div>
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="javascript:history.back()" style="position: absolute; bottom: 10px; right: 10px; text-decoration: none; color: #007bff;">
-        Volver atrás
-    </a>
+       
     </form>
         </div>';
 web($formulario);
@@ -229,6 +254,10 @@ echo "actualizar curso $curso $codigo";
 
                 
 
+
+        }elseif ($opcion == 'listadetalles') {
+
+echo "codigo para listar profesores asignados a la asignatura y poder eliminar";
 
         }
         

@@ -64,27 +64,76 @@ exit();
     web($formulario);
 
     die();
+    }else if($opcion == "selectcurso"){
+       // Asumiendo que $id_alumno viene de la URL o alguna otra fuente
+$id_alumno = $_GET['id']; // o $_POST['id'] si viene del POST
+$url=protegerURL("../controladores/alumnos.php?opcion=actualizacioncurso");
+$alumno=obtenerAlumnoPorId($id_alumno);
+// Aquí generamos el formulario para asignar un curso al alumno
+$formulario = '
+    <div class="fullscreen-container">
+        
+        <form class="login-form" action="'.$url.'" method="post">
+            <h3>Asignar Curso</h3>
+            <label for="alumno">Selecciona un Curso</label>
+                    ';
+            
+
+    // Llamar a la función listarCursosEnSelect() para generar el select con los cursos
+    ob_start(); // Capturar la salida de listarCursosEnSelect()
+    listarCursosEnSelectid();
+    $formulario .= ob_get_clean();  // Agregar el contenido generado a la variable $formulario
+    
+    // Botón de submit
+    $formulario .= '
+                <input type="hidden" name="id_alumno" value="' . htmlspecialchars($id_alumno) . '">
+
+            <hr><button type="submit" class="btn btn-success">Guardar Curso</button>
+        </form>
+    </div>';
+    
+    
+        web($formulario);
+    }else if($opcion =="actualizacioncurso"){
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Recibe los valores del formulario
+            $idAlumno = $_POST['id_alumno'];
+            $idCurso = $_POST['id_curso'];
+            // Llamada a la función para asignar el curso
+            $mensaje = asignarCursoAlumno($idAlumno, $idCurso);
+            
+            // Mostrar mensaje
+            echo "$mensaje";
+        }            header('Location: ../public/crearalumnos.php');
+
+    }else if($opcion=="crearalumno"){
+
+
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Recibir los datos del formulario
+            $nombre = $_POST['nombre'];
+            $apellidos = $_POST['apellidos'];
+            $rut = $_POST['rut'];
+            $fechaNacimiento = $_POST['fecha_nacimiento'];
+            // Llamar a la función de crear alumno
+            $mensaje = crearAlumno($nombre, $apellidos, $rut, $fechaNacimiento);
+        
+            // Mostrar el mensaje de éxito o error
+            echo $mensaje;
+            eliminarAlumno($idAlumno);
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+            exit();
+        
+        }
+
     }
+
+
+
 }
 
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recibir los datos del formulario
-    $nombre = $_POST['nombre'];
-    $apellidos = $_POST['apellidos'];
-    $rut = $_POST['rut'];
-    $fechaNacimiento = $_POST['fecha_nacimiento'];
-    // Llamar a la función de crear alumno
-    $mensaje = crearAlumno($nombre, $apellidos, $rut, $fechaNacimiento);
-
-    // Mostrar el mensaje de éxito o error
-    echo $mensaje;
-    eliminarAlumno($idAlumno);
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
-    exit();
-
-}
 
 
 ?>

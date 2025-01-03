@@ -6,7 +6,7 @@ function obtenerUsuarioPorId($idUsuario) {
         $conn = getDbConnection();
 
         // Consulta SQL para obtener los datos del usuario
-        $sql = "SELECT * FROM usuarios WHERE id_usuarios = :idUsuario AND activo = 1";
+        $sql = "SELECT * FROM usuarios WHERE id_usuarios = :idUsuario AND activo = 1 AND id_usuarios != 99";
 
         // Preparar la consulta
         $stmt = $conn->prepare($sql);
@@ -36,7 +36,7 @@ function obteneridusuariosxrol($idrol) {
         // Obtener la conexión
         $conn = getDbConnection();
         // Consulta SQL para obtener los datos del usuario-roles se obtienen todos los id de docentes
-        $sqlUsuario = "SELECT `usuario` FROM `usuario-roles` WHERE `rol` = :rol";
+        $sqlUsuario = "SELECT `usuario` FROM `usuario-roles` WHERE (`rol` = :rol OR :rol = '') AND `rol` != 99";
         // Preparar la consulta
         $stmt = $conn->prepare($sqlUsuario);
         $stmt->bindParam(':rol', $idrol, PDO::PARAM_INT);
@@ -121,6 +121,7 @@ function verificarPrimerUso() {
 
 function eliminarUsuario($idUsuario) {
     try {
+        actualizarHorario(null, $idUsuario);
         // Obtener la conexión a la base de datos
         $conn = getDbConnection(); // Asegúrate de tener esta función que devuelve la conexión a la base de datos.
 
@@ -206,6 +207,8 @@ function asignarRolAUsuario($idUsuario) {
 }
 function eliminarLogicoUsuario($usuarioId) {
     try {
+        actualizarHorario(null, $usuarioId);
+
         // Crear la conexión a la base de datos
         $conexion = getDbConnection();
 
@@ -235,22 +238,58 @@ function obtenerNombreUsuarioPorId($id_usuario) {
         $conn = getDbConnection();
 
         // Consulta SQL para obtener el nombre del usuario por su id
-        $sql = "SELECT nombre FROM usuarios WHERE id_usuarios = :id_usuario";
+        $sql = "SELECT nombre, apellido FROM usuarios WHERE id_usuarios = :id_usuario";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         $stmt->execute();
 
         // Obtener el resultado
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nombrecompleto= $usuario['nombre']." ".$usuario['apellido'];
+        if ($nombrecompleto=="asignar profesor asignar profesor"){
+            $nombrecompleto="Sin asignar";
 
+        }
         // Si el usuario existe, devolver su nombre
         if ($usuario) {
-            return $usuario['nombre'];
+            return $nombrecompleto;
         } else {
             return "Usuario no encontrado";
         }
     } catch (PDOException $e) {
         die("Error al obtener el nombre del usuario: " . $e->getMessage());
+    }
+}
+
+
+function actualizaUsuarioRol($idUsuario, $rol) {
+
+    echo "idusuario $idUsuario rol $rol";
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Consulta SQL para actualizar el rol del usuario
+        $sql = "UPDATE `usuario-roles` SET rol = :rol WHERE usuario = :idUsuario";
+
+        // Preparar la consulta
+        $stmt = $conn->prepare($sql);
+
+        // Vincular los parámetros
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->bindParam(':rol', $rol, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Verificar si se actualizó alguna fila
+        if ($stmt->rowCount() > 0) {
+            return true;  // Rol actualizado exitosamente
+        } else {
+            return false; // No se realizó ninguna actualización (probablemente el rol es el mismo)
+        }
+    } catch (PDOException $e) {
+        die("Error al actualizar el rol del usuario: " . $e->getMessage());
     }
 }
 

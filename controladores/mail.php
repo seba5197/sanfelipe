@@ -24,15 +24,16 @@ try {
     $mail->Password = SMTP_PASSWORD;
     $mail->SMTPSecure = SMTP_SECURE;
     $mail->Port = 465;
-
+    $link=protegerURL("https://notalo.net/sanfelipe/public/recuperar_contrasena.php?opcion=restablecer&correo=$correo");
+    
     // Configuración del remitente y destinatario
     $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
-    $mail->addAddress('sebastian5197@gmail.com', 'Seba'); // Correo del destinatario
+    $mail->addAddress($correo, 'Web'); // Correo del destinatario
 
     // Contenido del mensaje
     $mail->isHTML(true);
     $mail->Subject = 'Asunto del correo';
-    $mail->Body = '<h1>Hola desde PHPMailer</h1><p>Este es un mensaje de prueba.</p>';
+    $mail->Body = '<h1>Recuperar contraseña</h1><p>Nueva contraseña '.$nuevaContrasena.' temporal. <a href="'.$link.'">Cambiar pass</a></p>';
     $mail->AltBody = 'Este es un mensaje de prueba en texto plano.';
 
     // Enviar correo

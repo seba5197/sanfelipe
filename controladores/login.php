@@ -5,14 +5,7 @@ include_once '../config/config.php';
 
 function validarUsuario($rutOcorreo, $password) {
 
-    //hasheo password esto se usa al registrar las pass
-      //  $password = password_hash($password, PASSWORD_DEFAULT);
-    //  password_verify($password, $usuario['pass'])
-    //verifica la pass hasheada desde la bd
-
-    //$rutOcorreo = preg_replace('/[^0-9kK]/', '', $rutOcorreo); // Eliminar caracteres no válidos
-    //$rutOcorreo = strtolower($rutOcorreo); // Convertir cualquier 'K' a minúscula 'k'
-    
+      
     try {
      
         // Obtener la conexión
@@ -28,12 +21,12 @@ function validarUsuario($rutOcorreo, $password) {
         // Obtener los datos del usuario
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
         // Verificar si el usuario existe y si la contraseña es válida
-echo "usuario validado $rutOcorreo";
 verificarUsuarioActivo($usuario['id_usuarios']);
 
         if ($usuario && decodificarPass($password, $usuario['pass'])) {
             //confirma nombre de la persona logeada
             $nombre =$usuario['nombre'];
+            $idusuario=$usuario['id_usuarios'];
             echo  "usuario validado $nombre <br>";
             //obtiene lista de roles, se puede colocar un midleware para multiples roles, selector de rol.
             $rol=obtenerRolesUsuario($usuario['id_usuarios']);
@@ -52,6 +45,7 @@ verificarUsuarioActivo($usuario['id_usuarios']);
                 session_start();
                 $_SESSION['username'] = $nombre;
                 $_SESSION['rol'] = $primer_rol;
+                $_SESSION['id_usuarios'] = $idusuario;
 
             return true;
         } else {
@@ -78,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']) ?? '';
     $password = trim($_POST['password']) ?? '';
 
-    echo "$username <br>";
     // Llamar a la función para validar el usuario
     $usuarioValido = validarUsuario($username, $password);
   

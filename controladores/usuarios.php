@@ -45,7 +45,7 @@ validarURL(); // Asegúrate de que esta función valide la URL correctamente
                         <input type="text" id="apellido" name="apellido" value="' . htmlspecialchars($usuario['apellido']) . '" required>
     
                         <label for="correo">Correo:</label>
-                        <input type="email" id="correo" name="correo" value="' . htmlspecialchars($usuario['correo']) . '" required>
+                        <input type="email" id="correo class="form-control" name="correo" value="' . htmlspecialchars($usuario['correo']) . '" required>
     
                         <label for="telefono">Teléfono:</label>
                         <input type="text" id="telefono" name="telefono" value="' . htmlspecialchars($usuario['telefono']) . '" required>
@@ -66,6 +66,44 @@ validarURL(); // Asegúrate de que esta función valide la URL correctamente
         // Lógica para eliminar el usuario
         eliminarLogicoUsuario($idUsuario);
                //header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit();
+    }
+
+    elseif ($opcion == 'selectrol') {
+        $idUsuario = $_GET['id'];
+        $nombre=obtenerNombreUsuarioPorId($idUsuario);
+        $roles = obtenerListaRoles();
+        $url=protegerURL('../controladores/usuarios.php?opcion=actualizarol');
+        $formulario = '
+        <div class="fullscreen-container">
+            <form class="login-form" action="'.$url.'" method="post">
+            <h3 class="text-center">Actualizar Rol de Usuario '. $nombre.'</h3>
+        
+                <!-- Campo oculto para el idUsuario -->
+                <input type="hidden" name="idUsuario" value="' . htmlspecialchars($idUsuario) . '">
+                
+                <div class="form-group">
+                    <label for="rol">Selecciona el rol del usuario:</label>
+                    ' . mostrarSelectRoles($roles) . '
+                </div>
+        
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Actualizar Rol</button>
+                </div>
+            </form>
+        </div>';
+
+        // Lógica para formulario rol
+        web($formulario);
+               //header('Location: ' . $_SERVER['HTTP_REFERER']);
+        die();
+    }elseif ($opcion == 'actualizarol') {
+        $idUsuario = $_POST['idUsuario'];
+        $idRol = $_POST['id_roles'];
+        
+        // Lógica para eliminar el usuario
+        actualizaUsuarioRol($idUsuario,$idRol);
+               header('Location: ../public/');
         exit();
     }
 }
@@ -106,15 +144,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($opcion === 'docente') {
             echo "asignando rol docente";
             asignarRol($ultimoId, 2);
+            
         }else if($opcion === 'coordinador'){
             echo "asignando rol coordinador";
             asignarRol($ultimoId, 4);
         }else if($opcion === 'admin'){
             echo "asignando rol administrador";
             asignarRol($ultimoId, 1);
+        }else if($opcion === 'usuarios'){
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Obtener el valor seleccionado del select con name="id_roles"
+                $rolSeleccionado = isset($_POST['id_roles']) ? htmlspecialchars($_POST['id_roles']) : null;
+            
+                // Verificar si se seleccionó un rol
+                if ($rolSeleccionado) {
+                    echo 'El rol seleccionado es: ' . $rolSeleccionado;
+                    asignarRol($ultimoId, $rolSeleccionado);
+
+                } else {
+                    echo 'No se ha seleccionado un rol.';
+                }
+            };
+           
+
         }
-
-
 
 
     }else{
@@ -122,10 +175,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         asignarRol($ultimo, 99);
     }
 
-   //header('Location: ../public/');
+   header('Location: ../public/');
     exit();
 }
-
 
 
 

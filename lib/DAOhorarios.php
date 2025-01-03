@@ -199,21 +199,23 @@ function nombreHorarioPorCodigo($codigoHorario) {
 
 function mostrarHorariosPorCodigo($codigo_horario) {
     $urlcursohorario=protegerURL('../controladores/horarios.php?opcion=asignarcursohorario&codigo=' . $codigo_horario);
-
-    echo "<center><h3> Curso - horario </h3> <br>";
+    $curso=obtenerCursoPorCodigo($codigo_horario);
+    echo "<center><h3> Curso: $curso - Horario: $codigo_horario </h3> <br>";
     echo '<button class="btn btn-success" id="descargar"  onclick="imprimir()">Imprimir horario</button>';
-    echo '<a href="' . $urlcursohorario . '"><button class="btn btn-primary">Asignar curso</button></a></center>';
 
+    if (isset($_SESSION['rol']) && $_SESSION['rol'] === "admin") {
+        echo '<a href="' . $urlcursohorario . '"><button class="btn btn-primary"  id="cursos">Asignar curso</button></a></center>';
+
+    }
     try {
         // Conexión a la base de datos
         $conn = getDbConnection();
-
         // Consulta SQL para obtener los horarios por código
-        $sql = "SELECT * FROM `horario` WHERE `codigo horario` = :codigo_horario";
+        $sql = "SELECT * FROM `horario` WHERE `codigo horario` = :codigo_horario ORDER BY `indice_horario` ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':codigo_horario', $codigo_horario);
         $stmt->execute();
-
+        $contador=0;
         // Verificar si se encuentran resultados
         if ($stmt->rowCount() > 0) {
             // Crear la tabla HTML
@@ -224,18 +226,15 @@ function mostrarHorariosPorCodigo($codigo_horario) {
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
-
             // Inicializar arreglo para los días de la semana
             $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-
             // Inicializar un array para almacenar los horarios por día
             $horarios_dia = [];
-
             // Obtener todos los registros
             $horarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
             // Recorrer los registros y agrupar por hora
             foreach ($horarios as $horario) {
+                $contador++;
                 $hora = $horario['hora']; // Obtener hora
                 $dia = $horario['dia']; // Obtener el día
                 $asignatura = obtenerAsignaturaPorId( $horario['asignatura']); // Obtener asignatura
@@ -243,24 +242,36 @@ function mostrarHorariosPorCodigo($codigo_horario) {
                 $id=$horario['id_horario'];
                 // Organizar los horarios por hora y día
 
-                
+
+
                 $url=protegerURL('../controladores/horarios.php?opcion=editarhora&id=' . $id);
-                $horarios_dia[$hora][$dia] = "Asignatura: $asignatura<br>Profesor: $profesor <br>" .
-                '<a href="'.$url.'" class="edit-icon" data-dia="' . $dia . '" data-id="' . $horario['id_horario'] . '">
-                    <img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar
-                </a>';
+                
+                if (isset($_SESSION['rol']) && $_SESSION['rol'] === "admin") {
+                    $horarios_dia[$hora][$dia] = "$contador Asignatura: $asignatura<br>Profesor: $profesor <br>" .
+                    '<a href="'.$url.'" class="edit-icon" data-dia="' . $dia . '" data-id="' . $horario['id_horario'] . '">
+                        <img src="lapiz.png" alt="Editar" class="edit-icon-img"> Editar
+                    </a>';
+                }else{
+            $horarios_dia[$hora][$dia] = "$contador Asignatura: $asignatura<br>Profesor: $profesor <br>";
+
+                }
+               
             
             }
 
+
+            
+
             // Mostrar las filas de la tabla
             foreach ($horarios_dia as $hora => $dias_hora) {
+                
                 echo '<tr>';
                 echo '<td>' . $hora . '</td>';
 
                 // Recorrer los días (lunes a viernes) y mostrar la asignatura y profesor
                 foreach ($dias as $dia) {
                     // Verificar si hay datos para este día y hora
-                    $detalle = isset($dias_hora[$dia]) ? $dias_hora[$dia] : 'No asignado';
+                $detalle = isset($dias_hora[$dia]) ? $dias_hora[$dia] : "No asignado $contador";
                     echo "<td>$detalle</td>";
                 }
 
@@ -288,6 +299,92 @@ function mostrarHorariosPorCodigo($codigo_horario) {
         die("Error al obtener los horarios: " . $e->getMessage());
     }
 }
+
+  // Definir la constante HORARIOS con el formato '08:00 - 08:45', '08:45 - 09:30', etc.
+
+// Función para obtener el detalle del horario usando la constante HORARIOS
+function obtenerDetalleHorario($dia, $hora, $idProfesor) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();  // Asegúrate de que la función getDbConnection() esté configurada correctamente
+
+        // Consulta para obtener el detalle del horario
+        $sql = "SELECT * FROM `horario` WHERE `hora` LIKE :hora AND `dia` LIKE :dia AND `profesor` = :idProfesor ORDER BY `indice_horario` ASC";
+        
+        // Preparar la consulta
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':hora', $hora, PDO::PARAM_STR);
+        $stmt->bindParam(':dia', $dia, PDO::PARAM_STR);
+        $stmt->bindParam(':idProfesor', $idProfesor, PDO::PARAM_INT);
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+        
+        // Obtener los resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Si se encuentran resultados
+        if (count($resultado) > 0) {
+            // Retornamos la asignatura y el código horario
+            return [
+                'asignatura' => $resultado[0]['asignatura'],  // 'asignatura' es el ID de la asignatura
+                'codigo_horario' => $resultado[0]['codigo horario']  // 'codigo_horario' es el código único del horario
+            ];
+        } else {
+            // Si no se encuentra información para ese día y hora, retornamos que está libre
+            return [
+                'asignatura' => 'Libre',
+                'codigo_horario' => 'No asignado'
+            ];
+        }
+    } catch (PDOException $e) {
+        // Manejo de excepciones si hay un error en la consulta
+        die("Error al obtener el detalle del horario: " . $e->getMessage());
+    }
+}
+
+// Función para generar las tablas de horarios
+function generarTablasHorarios($idProfesor) {
+    // Días de la semana
+    $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+
+    // Crear las tablas HTML
+    echo "<div class='horarios-container'>";
+    
+    // Recorrer cada día de la semana
+    foreach ($dias as $dia) {
+        echo "<h3>" . ucfirst($dia) ." ".$idProfesor. "</h3>";
+        echo "<table class='table'>";
+        echo "<thead><tr><th>Hora</th><th>Asignatura</th><th>Código Horario</th></tr></thead>";
+        echo "<tbody>";
+
+        // Iterar sobre los horarios definidos en la constante HORARIOS
+        foreach (HORARIOS as $hora) {
+            // Obtener el detalle del horario
+            $horas=$hora[0].' - '.$hora[1];
+            $detalle = obtenerDetalleHorario($dia, $horas, $idProfesor);
+            // Mostrar la fila de la hora y la asignatura
+            echo "<tr>";
+            echo "<td>" . $horas . "</td>";
+            echo "<td>" .obtenerAsignaturaPorId( $detalle['asignatura']) . "</td>";
+            echo "<td>" . obtenerCursoPorCodigo( $detalle['codigo_horario']) . "</td>";
+            echo "</tr>";
+        }
+        echo "</tbody></table>";
+    }
+
+    echo "</div>";
+}
+
+
+
+
+
+
+
+
+
+
 
 
 function insertarCursoHorario($curso, $horario, $accion = 'insertar') {
@@ -467,7 +564,7 @@ function validarAsignacion($idProfesor, $dia, $hora) {
         die("Error al validar la asignación: " . $e->getMessage());
     }
 }
-function actualizarHorario($idHorario, $profesor, $asignatura) {
+function actualizarHorarioasignaturaprofesor($idHorario, $profesor, $asignatura) {
     try {
         // Conexión a la base de datos
         $conn = getDbConnection();
@@ -494,7 +591,56 @@ function actualizarHorario($idHorario, $profesor, $asignatura) {
         echo "Error al actualizar el horario: " . $e->getMessage();
     }
 }
+function actualizarHorario($idAsignatura = null, $idProfesor = null) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
 
+        // Inicializamos la consulta base
+        $sqlUpdate = "UPDATE horario SET asignatura = 99, profesor = 99 WHERE ";
+
+        // Creamos condiciones dinámicas basadas en los valores de idAsignatura y idProfesor
+        $conditions = [];
+        $params = [];
+
+        if ($idAsignatura !== null) {
+            $conditions[] = "asignatura = :idAsignatura";
+            $params[':idAsignatura'] = $idAsignatura;
+        }
+        
+        if ($idProfesor !== null) {
+            $conditions[] = "profesor = :idProfesor";
+            $params[':idProfesor'] = $idProfesor;
+        }
+
+        // Si no se especifica ni idAsignatura ni idProfesor, la consulta no tiene sentido
+        if (empty($conditions)) {
+            echo "<p>Debe proporcionar al menos un ID de asignatura o profesor para actualizar.</p>";
+            return;
+        }
+
+        // Unimos las condiciones con "OR" si ambas están presentes
+        $sqlUpdate .= implode(" OR ", $conditions);
+
+        // Preparar la consulta de actualización
+        $stmtUpdate = $conn->prepare($sqlUpdate);
+
+        // Ejecutar la consulta de actualización
+        $stmtUpdate->execute($params);
+
+        // Verificar si se han actualizado registros
+        $registrosActualizados = $stmtUpdate->rowCount();
+
+        if ($registrosActualizados > 0) {
+            echo "<p>Se han actualizado $registrosActualizados registros en la tabla horario.</p>";
+        } else {
+            echo "<p>No se encontraron registros para actualizar en la tabla horario.</p>";
+        }
+
+    } catch (PDOException $e) {
+        die("Error al actualizar registros en la tabla horario: " . $e->getMessage());
+    }
+}
 
 ?>
 

@@ -90,26 +90,33 @@ function listarAlumnos() {
         $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if ($alumnos) {
-            echo '<table class="table">';
+            echo '<table class="table table-bordered table-striped table-hover">';
             echo '<thead>';
             echo '<tr>';
-            echo '<th>ID</th><th>Nombre</th><th>Apellidos</th><th>RUT</th><th>Fecha de Nacimiento</th><th>Acciones</th>';
+            echo '<th>ID</th><th>Nombre</th><th>Apellidos</th><th>RUT</th><th>Fecha de Nacimiento</th><th>Curso</th><th>Acciones</th>';
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
 
             foreach ($alumnos as $alumno) {
                 $alumno_id = $alumno['id_alumno'];
+                $urlasignarcurso = protegerURL('../controladores/alumnos.php?opcion=selectcurso&id=' . $alumno_id);
                 $urleditar = protegerURL('../controladores/alumnos.php?opcion=editar&id=' . $alumno_id);
                 $urlelimnar = protegerURL('../controladores/alumnos.php?opcion=eliminar&id=' . $alumno_id);
+                $idcurso = obtenerCursoPorIdAlumno($alumno_id);
                 
+
+                $curso = obtenerCursoPorId($idcurso['id_curso']);
+                $curso = $curso['curso']." ". $curso['nivel'];
                 echo '<tr>';
                 echo '<td>' . htmlspecialchars($alumno['id_alumno']) . '</td>';
                 echo '<td>' . htmlspecialchars($alumno['nombre']) . '</td>';
                 echo '<td>' . htmlspecialchars($alumno['apellidos']) . '</td>';
                 echo '<td>' . htmlspecialchars($alumno['rut']) . '</td>';
                 echo '<td>' . htmlspecialchars($alumno['fecha de nacimiento']) . '</td>';
+                echo '<td>' . htmlspecialchars($curso) . '</td>';
                 echo '<td>';
+                echo '<a href="' . $urlasignarcurso . '" class="btn btn-success">Asignar curso</a> '; 
                 echo '<a href="' .$urleditar . '" class="btn btn-primary">Editar</a> '; 
                 echo '<a href="' . $urlelimnar . '" class="btn btn-danger" onclick="return confirm(\'¿Estás seguro de eliminar este alumno?\');">Eliminar</a>'; 
                 echo '</td>';
@@ -125,6 +132,7 @@ function listarAlumnos() {
         die("Error al listar los alumnos: " . $e->getMessage());
     }
 }
+
 function obtenerAlumnoPorId($idAlumno) {
     try {
         $conn = getDbConnection();
@@ -223,6 +231,43 @@ if (is_array($resultado)) {
         }
     } catch (PDOException $e) {
         die("Error al listar los horarios: " . $e->getMessage());
+    }
+}
+
+
+function asignarCursoAlumno($idAlumno, $idCurso) {
+    try {
+        // Conexión a la base de datos
+        $conn = getDbConnection();
+
+        // Verificar si el alumno ya tiene asignado un curso
+        $sqlVerificar = "SELECT * FROM `alumno-curso` WHERE id_alumno = :id_alumno";
+        $stmtVerificar = $conn->prepare($sqlVerificar);
+        $stmtVerificar->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
+        $stmtVerificar->execute();
+
+        // Si el alumno ya tiene un curso asignado, lo actualizamos
+        if ($stmtVerificar->rowCount() > 0) {
+            // Actualizar la relación existente
+            $sqlActualizar = "UPDATE `alumno-curso` SET id_curso = :id_curso WHERE id_alumno = :id_alumno";
+            $stmtActualizar = $conn->prepare($sqlActualizar);
+            $stmtActualizar->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
+            $stmtActualizar->bindParam(':id_curso', $idCurso, PDO::PARAM_INT);
+            $stmtActualizar->execute();
+
+            return "El curso del alumno ha sido actualizado correctamente.";
+        } else {
+            // Si no tiene un curso asignado, insertamos una nueva relación
+            $sqlInsertar = "INSERT INTO `alumno-curso` (id_alumno, id_curso) VALUES (:id_alumno, :id_curso)";
+            $stmtInsertar = $conn->prepare($sqlInsertar);
+            $stmtInsertar->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
+            $stmtInsertar->bindParam(':id_curso', $idCurso, PDO::PARAM_INT);
+            $stmtInsertar->execute();
+
+            return "El curso ha sido asignado al alumno correctamente.";
+        }
+    } catch (PDOException $e) {
+        die("Error al asignar el curso al alumno: " . $e->getMessage());
     }
 }
 

@@ -40,7 +40,7 @@ class Formularios {
 
     // Función para crear el formulario de Crear Asignatura
     public function crearFormularioAsignatura() {
-        $url=protegerURL("../controladores/asignaturas.php");
+        $url=protegerURL("../controladores/asignaturas.php?opcion=crearasignatura");
         echo '
         <div class="fullscreen-container">
             <form class="formulario-crear-asignatura" action="'.$url.'"" method="post">
@@ -118,7 +118,7 @@ class Formularios {
 
     // Función para crear el formulario de Crear Alumno
     public function crearFormularioAlumno() {
-        $url=protegerURL("../controladores/alumnos.php");
+        $url=protegerURL("../controladores/alumnos.php?opcion=crearalumno");
         echo '
         <div class="fullscreen-container">
             <form class="formulario-crear-alumno" action="'.$url.'" method="post">

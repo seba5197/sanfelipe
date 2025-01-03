@@ -58,7 +58,7 @@ function obtenerProfesoresPorAsignaturaHTML($idAsignatura) {
 
             if (validarAsignacion($usuario['id_usuarios'], $dia, $hora)) {
                 // Realizar la asignación
-                echo '<option value="' . htmlspecialchars($profesor['id_profesor_asignatura']) . '"> ' .htmlspecialchars($nombre ) . '</option>';
+                echo '<option value="' . htmlspecialchars($usuario['id_usuarios']) . '"> ' .htmlspecialchars($nombre ) . '</option>';
             } else {
                 // Mostrar mensaje de error, evitamos que se muestren profesores asignados al horario solicitado si ya esta ocupado
                 //echo '<option value="' . htmlspecialchars($profesor['id_profesor_asignatura']) . '">' ."este profesor ya esta asignado a un horario" . '</option>';

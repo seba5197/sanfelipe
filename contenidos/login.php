@@ -1,7 +1,7 @@
 <?php
     // Función que genera el formulario de inicio de sesión
     function renderLoginForm() {
-      
+      $urlrecuperar=protegerURL("recuperar_contrasena.php");
  echo '
         <div class="fullscreen-container">
             <form class="login-form"  action="../controladores/login.php" method="post">';
@@ -13,7 +13,8 @@
                 <input type="password" name="password" placeholder="Contraseña" required>
                 <input type="submit" value="Ingresar">
                 <p class="recover-password">
-           <center>         <a href="recuperar_contrasena.php">¿Olvidaste tu contraseña?</a>
+           <center>         <a href="'. $urlrecuperar.'">¿Olvidaste tu contraseña?</a>
+           <br><a href="horariocompletocurso.php">Ver horarios</a>
                 </center></p>
             </form>
         </div>';
